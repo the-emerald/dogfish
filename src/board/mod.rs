@@ -1,5 +1,5 @@
 use std::sync::Arc;
-use crate::common::players::Player;
+use crate::common::colour::Colour;
 use crate::board::bitboards::BitBoard;
 
 pub mod piece;
@@ -13,13 +13,13 @@ pub const FILES: usize = 8;
 pub const RANKS: usize = 8;
 
 pub struct Board {
-    player: Player,
+    player: Colour,
 
     bb_pieces: [BitBoard; PIECES_TYPE_COUNT],
     bb_player: [BitBoard; PLAYERS_COUNT],
 
-    half_moves: u16,
-    full_moves: u16,
+    half_moves: u8,
+    full_moves: u8,
 
     previous: Option<Arc<Board>>
 }
@@ -27,7 +27,7 @@ pub struct Board {
 impl Board {
     pub fn new() -> Self {
         Self {
-            player: Player::White,
+            player: Colour::White,
             bb_pieces: [BitBoard::new(); PIECES_TYPE_COUNT],
             bb_player: [BitBoard::new(); PLAYERS_COUNT],
 

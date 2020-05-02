@@ -1,4 +1,4 @@
-use crate::common::players::Player;
+use crate::common::colour::Colour;
 
 #[derive(Copy, Clone)]
 pub enum PieceType {
