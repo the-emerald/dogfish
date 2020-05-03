@@ -4,6 +4,8 @@ use crate::board::bitboards::BitBoard;
 
 pub mod piece;
 pub mod bitboards;
+pub mod fen;
+pub mod castling;
 
 pub const PLAYERS_COUNT: usize = 2; // Number of players
 pub const PIECES_TYPE_COUNT: usize = 6; // Number of types of pieces there are for each side
@@ -18,6 +20,9 @@ pub struct Board {
     bb_pieces: [BitBoard; PIECES_TYPE_COUNT],
     bb_player: [BitBoard; PLAYERS_COUNT],
 
+    castling_rights: [[bool; 2]; PLAYERS_COUNT],
+    en_passant: BitBoard,
+
     half_moves: u8,
     full_moves: u8,
 
@@ -28,8 +33,11 @@ impl Board {
     pub fn new() -> Self {
         Self {
             player: Colour::White,
-            bb_pieces: [BitBoard::new(); PIECES_TYPE_COUNT],
-            bb_player: [BitBoard::new(); PLAYERS_COUNT],
+            bb_pieces: [BitBoard::zero(); PIECES_TYPE_COUNT],
+            bb_player: [BitBoard::zero(); PLAYERS_COUNT],
+
+            castling_rights: [[false; 2]; PLAYERS_COUNT],
+            en_passant: BitBoard::zero(),
 
             half_moves: 0,
             full_moves: 0,

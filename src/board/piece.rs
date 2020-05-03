@@ -1,6 +1,7 @@
 use crate::common::colour::Colour;
 
 #[derive(Copy, Clone)]
+#[repr(usize)]
 pub enum PieceType {
     P = 0,
     N = 1,
