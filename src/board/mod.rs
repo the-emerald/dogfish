@@ -1,6 +1,7 @@
 use std::sync::Arc;
 use crate::common::colour::Colour;
 use crate::board::bitboards::BitBoard;
+use crate::board::piece::PieceType;
 
 pub mod piece;
 pub mod bitboards;
@@ -43,5 +44,19 @@ impl Board {
             full_moves: 0,
             previous: None
         }
+    }
+
+    pub fn set_piece(&mut self, square: u64, piece: PieceType, colour: Colour) {
+        #[cfg(debug_assertions)]
+            if !BitBoard::valid_square(&square) {
+            panic!("invalid square being set on board")
+        }
+
+        self.bb_pieces[piece as usize] |= BitBoard::from_unshifted(square);
+        self.bb_player[colour as usize] |= BitBoard::from_unshifted(square);
+    }
+
+    pub fn remove_piece(&mut self, square: u64) {
+        unimplemented!()
     }
 }

@@ -28,73 +28,61 @@ impl FromStr for Board {
 
         for (idx, rank_str) in pieces.iter().enumerate() {
             let mut file: u64 = 0;
-            let val: u64 = (7 - (idx as u64)) * 8 + file;
 
             for char in rank_str.chars() {
+                let val: u64 = (7 - (idx as u64)) * 8 + file;
                 match char {
                     'P' => {
-                        board.bb_pieces[PieceType::P as usize] |= BitBoard::from_unshifted(val);
-                        board.bb_player[Colour::White as usize] |= BitBoard::from_unshifted(val);
+                        board.set_piece(val, PieceType::P, Colour::White);
                         file += 1;
                     },
                     'p' => {
-                        board.bb_pieces[PieceType::P as usize] |= BitBoard::from_unshifted(val);
-                        board.bb_player[Colour::Black as usize] |= BitBoard::from_unshifted(val);
+                        board.set_piece(val, PieceType::P, Colour::Black);
                         file += 1;
                     },
 
                     'N' => {
-                        board.bb_pieces[PieceType::N as usize] |= BitBoard::from_unshifted(val);
-                        board.bb_player[Colour::White as usize] |= BitBoard::from_unshifted(val);
+                        board.set_piece(val, PieceType::N, Colour::White);
                         file += 1;
                     },
                     'n' => {
-                        board.bb_pieces[PieceType::N as usize] |= BitBoard::from_unshifted(val);
-                        board.bb_player[Colour::Black as usize] |= BitBoard::from_unshifted(val);
+                        board.set_piece(val, PieceType::N, Colour::Black);
                         file += 1;
                     },
 
                     'B' => {
-                        board.bb_pieces[PieceType::B as usize] |= BitBoard::from_unshifted(val);
-                        board.bb_player[Colour::White as usize] |= BitBoard::from_unshifted(val);
+                        board.set_piece(val, PieceType::B, Colour::White);
                         file += 1;
                     },
                     'b' => {
-                        board.bb_pieces[PieceType::B as usize] |= BitBoard::from_unshifted(val);
-                        board.bb_player[Colour::Black as usize] |= BitBoard::from_unshifted(val);
+                        board.set_piece(val, PieceType::B, Colour::Black);
                         file += 1;
                     },
 
                     'R' => {
-                        board.bb_pieces[PieceType::R as usize] |= BitBoard::from_unshifted(val);
-                        board.bb_player[Colour::White as usize] |= BitBoard::from_unshifted(val);
+                        board.set_piece(val, PieceType::R, Colour::White);
                         file += 1;
                     },
                     'r' => {
-                        board.bb_pieces[PieceType::R as usize] |= BitBoard::from_unshifted(val);
-                        board.bb_player[Colour::Black as usize] |= BitBoard::from_unshifted(val);
+                        board.set_piece(val, PieceType::R, Colour::Black);
                         file += 1;
                     },
 
                     'Q' => {
-                        board.bb_pieces[PieceType::Q as usize] |= BitBoard::from_unshifted(val);
-                        board.bb_player[Colour::White as usize] |= BitBoard::from_unshifted(val);
+                        board.set_piece(val, PieceType::Q, Colour::White);
                         file += 1;
                     },
                     'q' => {
-                        board.bb_pieces[PieceType::Q as usize] |= BitBoard::from_unshifted(val);
-                        board.bb_player[Colour::Black as usize] |= BitBoard::from_unshifted(val);
+                        board.set_piece(val, PieceType::Q, Colour::Black);
                         file += 1;
                     },
 
                     'K' => {
-                        board.bb_pieces[PieceType::K as usize] |= BitBoard::from_unshifted(val);
-                        board.bb_player[Colour::White as usize] |= BitBoard::from_unshifted(val);
+                        board.set_piece(val, PieceType::K, Colour::White);
                         file += 1;
                     },
                     'k' => {
-                        board.bb_pieces[PieceType::K as usize] |= BitBoard::from_unshifted(val);
-                        board.bb_player[Colour::Black as usize] |= BitBoard::from_unshifted(val);
+                        board.set_piece(val, PieceType::K, Colour::Black);
                         file += 1;
                     },
 
@@ -151,7 +139,7 @@ impl FromStr for Board {
         // En passant square
         board.en_passant = {
             if v[3] != "-" {
-                match (v[3].chars().nth(0), v[3].chars().nth(1)) {
+                match (v[3].chars().nth(1), v[3].chars().nth(0)) {
                     (Some(r), Some(f)) => {
                         BitBoard::from_unshifted(BitBoard::rank_file_to_square(r, f)?)
                     },
@@ -176,5 +164,51 @@ impl FromStr for Board {
 impl ToString for Board {
     fn to_string(&self) -> String {
         unimplemented!()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::board::Board;
+    use crate::common::colour::Colour;
+
+    #[test]
+    #[should_panic(expected = "FEN")]
+    fn fen_parse_non_fen() {
+        let fen_str = "cat dog meow woof";
+        let board: Board = fen_str.parse().unwrap();
+    }
+
+    #[test]
+    fn fen_parse_starting() {
+        let fen_str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+        let board: Board = fen_str.parse().unwrap();
+
+        assert_eq!(board.bb_player[Colour::White as usize].to_string(), "0000000000000000000000000000000000000000000000001111111111111111");
+        assert_eq!(board.bb_player[Colour::Black as usize].to_string(), "1111111111111111000000000000000000000000000000000000000000000000");
+    }
+
+    #[test]
+    fn fen_parse_valid() {
+        let fen_str = "r3k1r1/pp3ppp/2pp1nb1/q2Pp3/P3P3/2N5/1PP2PPP/R3K2R w KQq e6 0 1";
+        let board: Board = fen_str.parse().unwrap();
+
+        assert_eq!(board.bb_player[Colour::White as usize].to_string(), "0000000000000000000000000000100000010001000001001110011010010001");
+        assert_eq!(board.bb_player[Colour::Black as usize].to_string(), "0101000111100011011011000001000100000000000000000000000000000000");
+    }
+
+    #[test]
+    #[should_panic(expected = "FEN")]
+    fn fen_parse_invalid_castling_black_kingside() {
+        let fen_str = "r3k1r1/pp3ppp/2pp1nb1/q2Pp3/P3P3/2N5/1PP2PPP/R3K2R w KQkq e6 0 1";
+        let board: Board = fen_str.parse().unwrap();
+    }
+
+    #[test]
+    #[should_panic(expected = "FEN")]
+    fn fen_parse_invalid_spacing() {
+        // Notice the 2pp2nb1
+        let fen_str = "r3k1r1/pp3ppp/2pp2nb1/q2Pp3/P3P3/2N5/1PP2PPP/R3K2R w KQq e6 0 1";
+        let board: Board = fen_str.parse().unwrap();
     }
 }
