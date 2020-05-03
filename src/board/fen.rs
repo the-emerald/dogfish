@@ -119,16 +119,16 @@ impl FromStr for Board {
         for char in v[2].chars() {
             match char {
                 'K' => {
-                    board.castling_rights[Colour::White as usize][CastlingRights::KingSide as usize];
+                    board.castling_rights[Colour::White as usize][CastlingRights::KingSide as usize] = true;
                 },
                 'Q' => {
-                    board.castling_rights[Colour::White as usize][CastlingRights::QueenSide as usize];
+                    board.castling_rights[Colour::White as usize][CastlingRights::QueenSide as usize] = true;
                 },
                 'k' => {
-                    board.castling_rights[Colour::Black as usize][CastlingRights::KingSide as usize];
+                    board.castling_rights[Colour::Black as usize][CastlingRights::KingSide as usize] = true;
                 },
                 'q' => {
-                    board.castling_rights[Colour::Black as usize][CastlingRights::QueenSide as usize];
+                    board.castling_rights[Colour::Black as usize][CastlingRights::QueenSide as usize] = true;
                 }
                 _ => {
                     return Err(anyhow!("invalid symbol for castling rights in FEN"))
