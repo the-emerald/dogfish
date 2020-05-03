@@ -1,8 +1,12 @@
 use std::ops::{BitOr, BitAnd, BitXor, Shl, Shr, BitOrAssign, BitAndAssign, BitXorAssign};
 use anyhow::anyhow;
 use std::str::FromStr;
+use std::fmt;
+use std::fmt::Formatter;
+use itertools::Itertools;
+use std::borrow::Borrow;
 
-#[derive(Copy, Clone, Debug)]
+#[derive(Copy, Clone)]
 pub struct BitBoard {
     board: u64,
 }
@@ -165,8 +169,28 @@ impl FromStr for BitBoard {
     }
 }
 
-impl ToString for BitBoard {
-    fn to_string(&self) -> String {
-        self.iter_bits().map(|x| (x as usize).to_string()).collect()
+impl fmt::Display for BitBoard {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        // write!(f, "{}", self.iter_bits().map(|x| (x as usize).to_string()).collect::<String>())
+        write!(f, "{}", format!("{:#018x}", self.board))
+    }
+}
+
+impl fmt::Debug for BitBoard {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        let file = "  A B C D E F G H";
+        let board = self.iter_bits()
+            .map(
+                |x| if x {"x "} else {". "}
+            )
+            .collect::<String>()
+            .chars()
+            .chunks(16)
+            .into_iter()
+            .enumerate()
+            .map(|x| format!("{} {}", 8-x.0, x.1.collect::<String>()))
+            .join("\n");
+
+        write!(f, "{}\n{}", file, board)
     }
 }

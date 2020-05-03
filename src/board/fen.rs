@@ -184,8 +184,8 @@ mod tests {
         let fen_str = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
         let board: Board = fen_str.parse().unwrap();
 
-        assert_eq!(board.bb_player[Colour::White as usize].to_string(), "0000000000000000000000000000000000000000000000001111111111111111");
-        assert_eq!(board.bb_player[Colour::Black as usize].to_string(), "1111111111111111000000000000000000000000000000000000000000000000");
+        assert_eq!(board.bb_player[Colour::White as usize].to_string(), "0x000000000000ffff");
+        assert_eq!(board.bb_player[Colour::Black as usize].to_string(), "0xffff000000000000");
     }
 
     #[test]
@@ -193,8 +193,8 @@ mod tests {
         let fen_str = "r3k1r1/pp3ppp/2pp1nb1/q2Pp3/P3P3/2N5/1PP2PPP/R3K2R w KQq e6 0 1";
         let board: Board = fen_str.parse().unwrap();
 
-        assert_eq!(board.bb_player[Colour::White as usize].to_string(), "0000000000000000000000000000100000010001000001001110011010010001");
-        assert_eq!(board.bb_player[Colour::Black as usize].to_string(), "0101000111100011011011000001000100000000000000000000000000000000");
+        assert_eq!(board.bb_player[Colour::White as usize].to_string(), "0x000000081104e691");
+        assert_eq!(board.bb_player[Colour::Black as usize].to_string(), "0x51e36c1100000000");
     }
 
     #[test]
