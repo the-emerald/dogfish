@@ -9,6 +9,9 @@ edition = "2018"
 [dependencies]
 anyhow = "1.0.28"
 itertools = "0.9.0"
+num = "0.2.1"
+num-derive = "0.3.0"
+num-traits = "0.2.11"
 
 [lib]
 name = "dogfish"

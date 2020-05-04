@@ -1,7 +1,9 @@
 use crate::common::colour::Colour;
+use num_derive::FromPrimitive;
+use num_traits::FromPrimitive;
 
-#[derive(Copy, Clone)]
-#[repr(usize)]
+#[derive(Copy, Clone, FromPrimitive, Debug, PartialEq)]
+#[repr(u8)]
 pub enum PieceType {
     P = 0,
     N = 1,

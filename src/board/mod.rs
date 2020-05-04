@@ -9,6 +9,7 @@ pub mod bitboards;
 pub mod fen;
 pub mod castling;
 pub mod mailbox;
+pub mod piece;
 
 pub const PLAYERS_COUNT: usize = 2; // Number of players
 pub const PIECES_TYPE_COUNT: usize = 6; // Number of types of pieces there are for each side

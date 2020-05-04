@@ -1,10 +1,9 @@
 use crate::board::piecetype::PieceType;
 use crate::common::colour::Colour;
-
-pub struct Piece(u8); // TODO: Define this
+use crate::board::piece::Piece;
 
 pub struct Mailbox {
-    pieces: [Option<PieceType>; 64],
+    pieces: [Option<Piece>; 64],
 }
 
 impl Mailbox {
@@ -15,11 +14,15 @@ impl Mailbox {
     }
 
     pub fn set_piece(&mut self, square: usize, piece: PieceType, colour: Colour) {
-        unimplemented!()
+        self.pieces[square] = Some(Piece::from(piece, colour));
     }
 
     pub fn remove_piece(&mut self, square: usize) {
-        unimplemented!()
+        self.pieces[square] = None;
+    }
+
+    pub fn get_piece(&self, square: usize) -> Option<Piece> {
+        self.pieces[square]
     }
 }
 
