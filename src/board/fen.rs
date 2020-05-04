@@ -2,9 +2,9 @@ use std::str::FromStr;
 use crate::board::{Board, PIECES_TYPE_COUNT, PLAYERS_COUNT};
 use crate::board::piecetype::PieceType;
 use anyhow::anyhow;
-use crate::common::colour::Colour;
 use crate::board::castling::CastlingRights;
-use crate::board_representation::bitboards::BitBoard;
+use crate::board_representation::bitboard::BitBoard;
+use crate::board::colour::Colour;
 
 impl FromStr for Board {
     type Err = anyhow::Error;
@@ -200,14 +200,14 @@ impl FromStr for Board {
 
 impl ToString for Board {
     fn to_string(&self) -> String {
-        unimplemented!()
+        unimplemented!() // TODO: Write a Board to FEN converter
     }
 }
 
 #[cfg(test)]
 mod tests {
     use crate::board::Board;
-    use crate::common::colour::Colour;
+    use crate::board::colour::Colour;
 
     #[test]
     #[should_panic(expected = "FEN")]

@@ -1,14 +1,15 @@
 use std::sync::Arc;
-use crate::common::colour::Colour;
 use crate::board::piecetype::PieceType;
 use anyhow::anyhow;
-use crate::board_representation::bitboards::BitBoard;
+use crate::board_representation::bitboard::BitBoard;
 use crate::board_representation::mailbox::Mailbox;
+use crate::board::colour::Colour;
 
 pub mod piecetype;
 pub mod fen;
 pub mod castling;
 pub mod piece;
+pub mod colour;
 
 pub const PLAYERS_COUNT: usize = 2; // Number of players
 pub const PIECES_TYPE_COUNT: usize = 6; // Number of types of pieces there are for each side
@@ -40,12 +41,9 @@ impl Board {
             player: Colour::White,
             bb_pieces: [BitBoard::zero(); PIECES_TYPE_COUNT],
             bb_player: [BitBoard::zero(); PLAYERS_COUNT],
-
             mailbox: Mailbox::new(),
-
             castling_rights: [[false; 2]; PLAYERS_COUNT],
             en_passant: BitBoard::zero(),
-
             half_moves: 0,
             full_moves: 0,
             previous: None
@@ -64,12 +62,16 @@ impl Board {
         self.bb_pieces[piece as usize] |= BitBoard::from_square(square);
         self.bb_player[colour as usize] |= BitBoard::from_square(square);
 
-        // Set piece
+        // Set mailbox
         self.mailbox.set_piece(square as usize, piece, colour);
     }
 
     pub fn remove_piece(&mut self, square: u64) {
-        unimplemented!()
+        unimplemented!() // TODO: Implement remove piece
+    }
+
+    pub fn move_piece(from: u64, to: u64) {
+        unimplemented!() // TODO: Implement move piece
     }
 }
 

@@ -1,6 +1,6 @@
 use crate::board::piecetype::PieceType;
-use crate::common::colour::Colour;
 use num::FromPrimitive;
+use crate::board::colour::Colour;
 
 #[derive(Copy, Clone)]
 pub struct Piece(u8);
@@ -22,9 +22,9 @@ impl Piece {
 #[cfg(test)]
 mod tests {
     use crate::board::piece::Piece;
-    use crate::common::colour::Colour;
     use crate::board::piecetype;
     use crate::board::piecetype::PieceType;
+    use crate::board::colour::Colour;
 
     #[test]
     fn piece_white_pawn() {

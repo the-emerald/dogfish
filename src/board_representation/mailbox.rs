@@ -1,6 +1,6 @@
 use crate::board::piecetype::PieceType;
-use crate::common::colour::Colour;
 use crate::board::piece::Piece;
+use crate::board::colour::Colour;
 
 pub struct Mailbox {
     pieces: [Option<Piece>; 64],
@@ -25,4 +25,3 @@ impl Mailbox {
         self.pieces[square]
     }
 }
-
