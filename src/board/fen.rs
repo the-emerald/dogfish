@@ -1,10 +1,10 @@
 use std::str::FromStr;
 use crate::board::{Board, PIECES_TYPE_COUNT, PLAYERS_COUNT};
-use crate::board::bitboards::BitBoard;
 use crate::board::piecetype::PieceType;
 use anyhow::anyhow;
 use crate::common::colour::Colour;
 use crate::board::castling::CastlingRights;
+use crate::board_representation::bitboards::BitBoard;
 
 impl FromStr for Board {
     type Err = anyhow::Error;
