@@ -29,6 +29,9 @@ impl FromStr for Board {
             let mut file: u64 = 0;
 
             for char in rank_str.chars() {
+                if file >= 8 {
+                    return Err(anyhow!("invalid piece positioning in FEN"))
+                }
                 let val: u64 = (7 - (idx as u64)) * 8 + file;
                 match char {
                     'P' => {
@@ -197,14 +200,14 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "FEN")]
+    #[should_panic(expected = "castling")]
     fn fen_parse_invalid_castling_black_kingside() {
         let fen_str = "r3k1r1/pp3ppp/2pp1nb1/q2Pp3/P3P3/2N5/1PP2PPP/R3K2R w KQkq e6 0 1";
         let board: Board = fen_str.parse().unwrap();
     }
 
     #[test]
-    #[should_panic(expected = "FEN")]
+    #[should_panic(expected = "piece")]
     fn fen_parse_invalid_spacing() {
         // Notice the 2pp2nb1
         let fen_str = "r3k1r1/pp3ppp/2pp2nb1/q2Pp3/P3P3/2N5/1PP2PPP/R3K2R w KQq e6 0 1";
