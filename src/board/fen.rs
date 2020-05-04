@@ -143,7 +143,7 @@ impl FromStr for Board {
             if v[3] != "-" {
                 match (v[3].chars().nth(1), v[3].chars().nth(0)) {
                     (Some(r), Some(f)) => {
-                        BitBoard::from_unshifted(BitBoard::rank_file_to_square(r, f)?)
+                        BitBoard::from_unshifted(Board::rank_file_to_square(r, f)?)
                     },
                     _ => {
                         return Err(anyhow!("invalid en passant position in FEN"))

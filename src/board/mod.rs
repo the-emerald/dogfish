@@ -3,6 +3,7 @@ use crate::common::colour::Colour;
 use crate::board::bitboards::BitBoard;
 use crate::board::piecetype::PieceType;
 use crate::board::mailbox::Mailbox;
+use anyhow::anyhow;
 
 pub mod piecetype;
 pub mod bitboards;
@@ -55,9 +56,10 @@ impl Board {
 
     pub fn set_piece(&mut self, square: u64, piece: PieceType, colour: Colour) {
         #[cfg(debug_assertions)]
+        {
             if !Board::valid_square(&square) {
-            println!("Debug");
-            panic!("invalid square being set on board")
+                panic!("invalid square being set on board")
+            }
         }
 
         // Set bitboards
@@ -77,5 +79,64 @@ impl Board {
 impl Board {
     pub fn valid_square(sq: &u64) -> bool {
         (0..64).contains(sq)
+    }
+
+    pub fn rank_file_to_square(rank: char, file: char) -> anyhow::Result<u64> {
+        let mut square: u64 = 0;
+        match file {
+            'A' | 'a' => {}
+            'B' | 'b' => {
+                square += 1;
+            }
+            'C' | 'c' => {
+                square += 2;
+            }
+            'D' | 'd' => {
+                square += 3;
+            }
+            'E' | 'e' => {
+                square += 4;
+            }
+            'F' | 'f' => {
+                square += 5;
+            }
+            'G' | 'g' => {
+                square += 6;
+            }
+            'H' | 'h' => {
+                square += 7;
+            }
+            _ => {
+                return Err(anyhow!("invalid file in rank/file: {}", file));
+            }
+        }
+        match rank {
+            '1' => {},
+            '2' => {
+                square += 1 * 8;
+            },
+            '3' => {
+                square += 2 * 8;
+            },
+            '4' => {
+                square += 3 * 8;
+            },
+            '5' => {
+                square += 4 * 8;
+            },
+            '6' => {
+                square += 5 * 8;
+            },
+            '7' => {
+                square += 6 * 8;
+            },
+            '8' => {
+                square += 7 * 8;
+            },
+            _ => {
+                return Err(anyhow!("invalid rank in rank/file: {}", rank));
+            }
+        }
+        Ok(square)
     }
 }
