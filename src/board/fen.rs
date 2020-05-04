@@ -1,7 +1,7 @@
 use std::str::FromStr;
 use crate::board::{Board, PIECES_TYPE_COUNT, PLAYERS_COUNT};
 use crate::board::bitboards::BitBoard;
-use crate::board::piece::PieceType;
+use crate::board::piecetype::PieceType;
 use anyhow::anyhow;
 use crate::common::colour::Colour;
 use crate::board::castling::CastlingRights;
@@ -24,8 +24,7 @@ impl FromStr for Board {
             return Err(anyhow!("invalid number of ranks in FEN"));
         }
 
-        // Used to populate bitboard before the other information about the BitBoard can be filled
-
+        // Pieces
         for (idx, rank_str) in pieces.iter().enumerate() {
             let mut file: u64 = 0;
 
