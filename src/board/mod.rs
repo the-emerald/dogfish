@@ -63,8 +63,8 @@ impl Board {
         }
 
         // Set bitboards
-        self.bb_pieces[piece as usize] |= BitBoard::from_unshifted(square);
-        self.bb_player[colour as usize] |= BitBoard::from_unshifted(square);
+        self.bb_pieces[piece as usize] |= BitBoard::from_square(square);
+        self.bb_player[colour as usize] |= BitBoard::from_square(square);
 
         // Set piece
         self.mailbox.set_piece(square as usize, piece, colour);

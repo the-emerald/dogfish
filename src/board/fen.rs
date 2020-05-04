@@ -138,12 +138,47 @@ impl FromStr for Board {
             }
         }
 
+        // Validate said castling rights
+        let white_castling_squares = [0_usize, 7];
+        for wc in board.castling_rights[Colour::White as usize].iter().zip(white_castling_squares.iter()) {
+            if *wc.0 {
+                match board.mailbox.get_piece(*wc.1) {
+                    None => {
+                        return Err(anyhow!("invalid castling rights detected in FEN"))
+                    }
+                    Some(p) if (p.piece_type().unwrap() != PieceType::R || p.colour().unwrap() != Colour::White)=> {
+                        return Err(anyhow!("invalid castling rights detected in FEN"))
+                    }
+                    _ => {}
+                }
+            }
+        }
+
+        // Black
+        let black_castling_squares = [56_usize, 63];
+        for bc in board.castling_rights[Colour::Black as usize].iter().zip(black_castling_squares.iter()) {
+            if *bc.0 {
+                match board.mailbox.get_piece(*bc.1) {
+                    None => {
+                        return Err(anyhow!("invalid castling rights detected in FEN"))
+                    }
+                    Some(p)
+                    if (p.piece_type().unwrap() != PieceType::R ||
+                        p.colour().unwrap() != Colour::Black) => {
+
+                        return Err(anyhow!("invalid castling rights detected in FEN"))
+                    }
+                    _ => {}
+                }
+            }
+        }
+
         // En passant square
         board.en_passant = {
             if v[3] != "-" {
                 match (v[3].chars().nth(1), v[3].chars().nth(0)) {
                     (Some(r), Some(f)) => {
-                        BitBoard::from_unshifted(Board::rank_file_to_square(r, f)?)
+                        BitBoard::from_square(Board::rank_file_to_square(r, f)?)
                     },
                     _ => {
                         return Err(anyhow!("invalid en passant position in FEN"))

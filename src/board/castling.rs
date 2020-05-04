@@ -1,6 +1,6 @@
 #[derive(Copy, Clone)]
 #[repr(u8)]
 pub enum CastlingRights {
-    KingSide = 0,
-    QueenSide = 1
+    QueenSide = 0,
+    KingSide = 1
 }

@@ -18,7 +18,7 @@ impl BitBoard {
         }
     }
 
-    pub fn from_unshifted(val: u64) -> Self {
+    pub fn from_square(val: u64) -> Self {
         Self {
             board: 1u64 << val
         }
@@ -105,7 +105,6 @@ impl FromStr for BitBoard {
 
 impl fmt::Display for BitBoard {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        // write!(f, "{}", self.iter_bits().map(|x| (x as usize).to_string()).collect::<String>())
         write!(f, "{}", format!("{:#018x}", self.board))
     }
 }
