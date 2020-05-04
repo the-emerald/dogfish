@@ -11,7 +11,7 @@ pub mod ranks;
 pub mod shift;
 pub mod ops;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Eq, PartialEq)]
 pub struct BitBoard {
     board: u64,
 }
@@ -56,7 +56,7 @@ impl fmt::Display for BitBoard {
 
 impl fmt::Debug for BitBoard {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        let file = "  A B C D E F G H";
+        let file = "\n  A B C D E F G H";
         let board = self.iter_bits()
             .map(
                 |x| if x {"x "} else {". "}
@@ -66,7 +66,12 @@ impl fmt::Debug for BitBoard {
             .chunks(16)
             .into_iter()
             .enumerate()
-            .map(|x| format!("{} {}", 8-x.0, x.1.collect::<String>()))
+            .map(|x| format!("{} {}", 8-x.0, x.1
+                .collect::<String>()
+                .chars()
+                .rev()
+                .collect::<String>()
+            ))
             .join("\n");
 
         write!(f, "{}\n{}", file, board)
