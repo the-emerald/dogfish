@@ -1,5 +1,5 @@
 use std::str::FromStr;
-use crate::board::{Board, PIECES_TYPE_COUNT, PLAYERS_COUNT};
+use crate::board::{Board};
 use crate::board::piecetype::PieceType;
 use anyhow::anyhow;
 use crate::board::castling::CastlingRights;

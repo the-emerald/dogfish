@@ -53,7 +53,7 @@ impl Board {
     pub fn set_piece(&mut self, square: u64, piece: PieceType, colour: Colour) {
         #[cfg(debug_assertions)]
         {
-            if !Board::valid_square(&square) {
+            if !Board::valid_square(square) {
                 panic!("invalid square being set on board")
             }
         }
@@ -77,8 +77,8 @@ impl Board {
 
 // Helper functions
 impl Board {
-    pub fn valid_square(sq: &u64) -> bool {
-        (0..64).contains(sq)
+    pub fn valid_square(sq: u64) -> bool {
+        (0..64).contains(&sq)
     }
 
     pub fn rank_file_to_square(rank: char, file: char) -> anyhow::Result<u64> {
@@ -113,7 +113,7 @@ impl Board {
         match rank {
             '1' => {},
             '2' => {
-                square += 1 * 8;
+                square += 8;
             },
             '3' => {
                 square += 2 * 8;

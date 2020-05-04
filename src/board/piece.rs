@@ -1,6 +1,6 @@
 use crate::board::piecetype::PieceType;
-use num::FromPrimitive;
 use crate::board::colour::Colour;
+use num::FromPrimitive;
 
 #[derive(Copy, Clone)]
 pub struct Piece(u8);
@@ -10,11 +10,11 @@ impl Piece {
         Self(colour as u8 | ((piece_type as u8) << 1))
     }
 
-    pub fn colour(&self) -> Option<Colour> {
+    pub fn colour(self) -> Option<Colour> {
         num::FromPrimitive::from_u8(self.0 & 1)
     }
 
-    pub fn piece_type(&self) -> Option<PieceType> {
+    pub fn piece_type(self) -> Option<PieceType> {
         num::FromPrimitive::from_u8(self.0 >> 1)
     }
 }
