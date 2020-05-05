@@ -103,7 +103,7 @@ mod tests {
     }
 
     #[test]
-    fn shift_h8_north() {
+    fn shift_h8() {
         let h8 = BitBoard::from_shifted(1 << 63);
         assert_eq!(
             BitBoard::shift(Direction::North, h8),
