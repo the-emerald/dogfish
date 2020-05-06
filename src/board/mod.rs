@@ -1,17 +1,13 @@
 use std::sync::Arc;
-use crate::board::piecetype::PieceType;
 use anyhow::anyhow;
 use crate::board_representation::bitboard::BitBoard;
 use crate::board_representation::mailbox::Mailbox;
-use crate::board::colour::Colour;
 use crate::board_representation::square::Square;
-use crate::board::piece::Piece;
+use crate::piece::colour::Colour;
+use crate::piece::Piece;
 
-pub mod piecetype;
 pub mod fen;
 pub mod castling;
-pub mod piece;
-pub mod colour;
 
 pub const PLAYERS_COUNT: usize = 2; // Number of players
 pub const PIECES_TYPE_COUNT: usize = 6; // Number of types of pieces there are for each side

@@ -1,4 +1,4 @@
-use crate::board::piece::Piece;
+use crate::piece::Piece;
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[repr(u8)]

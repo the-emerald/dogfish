@@ -1,11 +1,11 @@
 use std::str::FromStr;
 use crate::board::{Board};
-use crate::board::piecetype::PieceType;
 use anyhow::anyhow;
 use crate::board::castling::CastlingRights;
-use crate::board::colour::Colour;
 use crate::board_representation::square::Square;
 use std::convert::TryInto;
+use crate::piece::colour::Colour;
+use crate::piece::piecetype::PieceType;
 
 impl FromStr for Board {
     type Err = anyhow::Error;
@@ -209,7 +209,7 @@ impl ToString for Board {
 #[cfg(test)]
 mod tests {
     use crate::board::Board;
-    use crate::board::colour::Colour;
+    use crate::piece::colour::Colour;
 
     #[test]
     #[should_panic(expected = "FEN")]

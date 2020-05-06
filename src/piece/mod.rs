@@ -1,5 +1,9 @@
-use crate::board::piecetype::PieceType;
-use crate::board::colour::Colour;
+use crate::piece::colour::Colour;
+use crate::piece::piecetype::PieceType;
+
+pub mod colour;
+pub mod piecetype;
+pub mod attacks;
 
 #[derive(Copy, Clone)]
 pub struct Piece {
