@@ -140,10 +140,10 @@ impl FromStr for Board {
         }
 
         // Validate said castling rights
-        let white_castling_squares = [0_usize, 7];
+        let white_castling_squares = [0_u64, 7];
         for wc in board.castling_rights[Colour::White as usize].iter().zip(white_castling_squares.iter()) {
             if *wc.0 {
-                match board.mailbox.get_piece(*wc.1) {
+                match board.mailbox.get_piece((*wc.1).try_into()?) {
                     None => {
                         return Err(anyhow!("invalid castling rights detected in FEN"))
                     }
@@ -156,10 +156,10 @@ impl FromStr for Board {
         }
 
         // Black
-        let black_castling_squares = [56_usize, 63];
+        let black_castling_squares = [56_u64, 63];
         for bc in board.castling_rights[Colour::Black as usize].iter().zip(black_castling_squares.iter()) {
             if *bc.0 {
-                match board.mailbox.get_piece(*bc.1) {
+                match board.mailbox.get_piece((*bc.1).try_into()?) {
                     None => {
                         return Err(anyhow!("invalid castling rights detected in FEN"))
                     }

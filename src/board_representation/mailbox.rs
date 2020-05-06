@@ -18,11 +18,11 @@ impl Mailbox {
         self.pieces[square.value() as usize] = Some((colour, piece_type).into());
     }
 
-    pub fn remove_piece(&mut self, square: usize) {
-        self.pieces[square] = None;
+    pub fn remove_piece(&mut self, square: Square) {
+        self.pieces[square.value() as usize] = None;
     }
 
-    pub fn get_piece(&self, square: usize) -> Option<Piece> {
-        self.pieces[square]
+    pub fn get_piece(&self, square: Square) -> Option<Piece> {
+        self.pieces[square.value() as usize]
     }
 }
