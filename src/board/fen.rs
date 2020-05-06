@@ -5,6 +5,8 @@ use anyhow::anyhow;
 use crate::board::castling::CastlingRights;
 use crate::board_representation::bitboard::BitBoard;
 use crate::board::colour::Colour;
+use crate::board_representation::square::Square;
+use std::convert::TryInto;
 
 impl FromStr for Board {
     type Err = anyhow::Error;
@@ -32,7 +34,7 @@ impl FromStr for Board {
                 if file >= 8 {
                     return Err(anyhow!("invalid piece positioning in FEN"))
                 }
-                let val: u64 = (7 - (idx as u64)) * 8 + file;
+                let val: Square = ((7 - (idx as u64)) * 8 + file).try_into()?;
                 match char {
                     'P' => {
                         board.set_piece(val, PieceType::P, Colour::White);
@@ -178,7 +180,8 @@ impl FromStr for Board {
             if v[3] != "-" {
                 match (v[3].chars().nth(1), v[3].chars().nth(0)) {
                     (Some(r), Some(f)) => {
-                        BitBoard::from_square(Board::rank_file_to_square(r, f)?)
+                        let ep_square: Square = (f, r).try_into()?;
+                        ep_square.into()
                     },
                     _ => {
                         return Err(anyhow!("invalid en passant position in FEN"))
@@ -186,7 +189,7 @@ impl FromStr for Board {
                 }
             }
             else {
-                BitBoard::zero()
+                0.into()
             }
         };
 

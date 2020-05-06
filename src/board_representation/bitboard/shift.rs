@@ -14,14 +14,14 @@ pub enum Direction {
 impl BitBoard {
     pub fn shift(direction: Direction, bitboard: Self) -> Self {
         match direction {
-            Direction::North => { bitboard << BitBoard::from_shifted(8) },
-            Direction::NorthEast => { (bitboard & !FILE_H_BITBOARD) << BitBoard::from_shifted(9) },
-            Direction::East => { (bitboard & !FILE_H_BITBOARD) << BitBoard::from_shifted(1) },
-            Direction::SouthEast => { (bitboard & !FILE_H_BITBOARD) >> BitBoard::from_shifted(7) },
-            Direction::South => {bitboard >> BitBoard::from_shifted(8)},
-            Direction::SouthWest => { (bitboard & !FILE_A_BITBOARD) >> BitBoard::from_shifted(9)},
-            Direction::West => { (bitboard & !FILE_A_BITBOARD) >> BitBoard::from_shifted(1)},
-            Direction::NorthWest => { (bitboard & !FILE_A_BITBOARD) << BitBoard::from_shifted(7) },
+            Direction::North => { bitboard << 8.into() },
+            Direction::NorthEast => { (bitboard & !FILE_H_BITBOARD) << 9.into() },
+            Direction::East => { (bitboard & !FILE_H_BITBOARD) << 1.into() },
+            Direction::SouthEast => { (bitboard & !FILE_H_BITBOARD) >> 7.into() },
+            Direction::South => {bitboard >> 8.into()},
+            Direction::SouthWest => { (bitboard & !FILE_A_BITBOARD) >> 9.into() },
+            Direction::West => { (bitboard & !FILE_A_BITBOARD) >> 1.into() },
+            Direction::NorthWest => { (bitboard & !FILE_A_BITBOARD) << 7.into() },
         }
     }
 }
@@ -46,7 +46,7 @@ mod tests {
         let a1 = FILE_A_BITBOARD | RANK_1_BITBOARD;
         assert_eq!(
             BitBoard::shift(Direction::NorthEast, a1),
-            BitBoard::from_shifted(0x20202020202fe00)
+            0x20202020202fe00.into()
         )
     }
 
@@ -63,7 +63,7 @@ mod tests {
         let a8 = FILE_A_BITBOARD | RANK_8_BITBOARD;
         assert_eq!(
             BitBoard::shift(Direction::SouthEast, a8),
-            BitBoard::from_shifted(0xfe020202020202)
+            0xfe020202020202.into()
         )
     }
 
@@ -80,7 +80,7 @@ mod tests {
         let h8 = FILE_H_BITBOARD | RANK_8_BITBOARD;
         assert_eq!(
             BitBoard::shift(Direction::SouthWest, h8),
-            BitBoard::from_shifted(0x7f404040404040)
+            0x7f404040404040.into()
         )
     }
 
@@ -95,36 +95,36 @@ mod tests {
     #[test]
     fn shift_northwest() {
         let h1 = FILE_H_BITBOARD | RANK_1_BITBOARD;
-        assert_eq!(h1, BitBoard::from_shifted(0x80808080808080ff));
+        assert_eq!(h1, 0x80808080808080ff.into());
         assert_eq!(
             BitBoard::shift(Direction::NorthWest, h1),
-            BitBoard::from_shifted(0x4040404040407f00)
+            0x4040404040407f00.into()
         )
     }
 
     #[test]
     fn shift_h8() {
-        let h8 = BitBoard::from_shifted(1 << 63);
+        let h8 = (1 << 63).into();
         assert_eq!(
             BitBoard::shift(Direction::North, h8),
-            BitBoard::zero()
+            0.into()
         );
 
         assert_eq!(
             BitBoard::shift(Direction::NorthEast, h8),
-            BitBoard::zero()
+            0.into()
         );
 
         assert_eq!(
             BitBoard::shift(Direction::East, h8),
-            BitBoard::zero()
+            0.into()
         );
 
     }
 
     #[test]
     fn shift_full_board() {
-        let all = BitBoard::from_shifted(u64::MAX);
+        let all: BitBoard = u64::MAX.into();
         assert_eq!(
             BitBoard::shift(Direction::North, all),
             all ^ RANK_1_BITBOARD

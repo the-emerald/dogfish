@@ -4,6 +4,7 @@ use anyhow::anyhow;
 use crate::board_representation::bitboard::BitBoard;
 use crate::board_representation::mailbox::Mailbox;
 use crate::board::colour::Colour;
+use crate::board_representation::square::Square;
 
 pub mod piecetype;
 pub mod fen;
@@ -39,31 +40,24 @@ impl Board {
     pub fn new() -> Self {
         Self {
             player: Colour::White,
-            bb_pieces: [BitBoard::zero(); PIECES_TYPE_COUNT],
-            bb_player: [BitBoard::zero(); PLAYERS_COUNT],
+            bb_pieces: [0.into(); PIECES_TYPE_COUNT],
+            bb_player: [0.into(); PLAYERS_COUNT],
             mailbox: Mailbox::new(),
             castling_rights: [[false; 2]; PLAYERS_COUNT],
-            en_passant: BitBoard::zero(),
+            en_passant: 0.into(),
             half_moves: 0,
             full_moves: 0,
             previous: None
         }
     }
 
-    pub fn set_piece(&mut self, square: u64, piece: PieceType, colour: Colour) {
-        #[cfg(debug_assertions)]
-        {
-            if !Board::valid_square(square) {
-                panic!("invalid square being set on board")
-            }
-        }
-
+    pub fn set_piece(&mut self, square: Square, piece: PieceType, colour: Colour) {
         // Set bitboards
-        self.bb_pieces[piece as usize] |= BitBoard::from_square(square);
-        self.bb_player[colour as usize] |= BitBoard::from_square(square);
+        self.bb_pieces[piece as usize] |= square.into();
+        self.bb_player[colour as usize] |= square.into();
 
         // Set mailbox
-        self.mailbox.set_piece(square as usize, piece, colour);
+        self.mailbox.set_piece(square, piece, colour);
     }
 
     pub fn remove_piece(&mut self, square: u64) {
@@ -72,71 +66,5 @@ impl Board {
 
     pub fn move_piece(from: u64, to: u64) {
         unimplemented!() // TODO: Implement move piece
-    }
-}
-
-// Helper functions
-impl Board {
-    pub fn valid_square(sq: u64) -> bool {
-        (0..64).contains(&sq)
-    }
-
-    pub fn rank_file_to_square(rank: char, file: char) -> anyhow::Result<u64> {
-        let mut square: u64 = 0;
-        match file {
-            'A' | 'a' => {}
-            'B' | 'b' => {
-                square += 1;
-            }
-            'C' | 'c' => {
-                square += 2;
-            }
-            'D' | 'd' => {
-                square += 3;
-            }
-            'E' | 'e' => {
-                square += 4;
-            }
-            'F' | 'f' => {
-                square += 5;
-            }
-            'G' | 'g' => {
-                square += 6;
-            }
-            'H' | 'h' => {
-                square += 7;
-            }
-            _ => {
-                return Err(anyhow!("invalid file in rank/file: {}", file));
-            }
-        }
-        match rank {
-            '1' => {},
-            '2' => {
-                square += 8;
-            },
-            '3' => {
-                square += 2 * 8;
-            },
-            '4' => {
-                square += 3 * 8;
-            },
-            '5' => {
-                square += 4 * 8;
-            },
-            '6' => {
-                square += 5 * 8;
-            },
-            '7' => {
-                square += 6 * 8;
-            },
-            '8' => {
-                square += 7 * 8;
-            },
-            _ => {
-                return Err(anyhow!("invalid rank in rank/file: {}", rank));
-            }
-        }
-        Ok(square)
     }
 }

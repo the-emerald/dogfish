@@ -7,7 +7,7 @@ impl BitOr for BitBoard {
     type Output = BitBoard;
 
     fn bitor(self, rhs: Self) -> Self::Output {
-        BitBoard::from_shifted(self.board | rhs.board)
+        (self.board | rhs.board).into()
     }
 }
 
@@ -21,7 +21,7 @@ impl BitAnd for BitBoard {
     type Output = BitBoard;
 
     fn bitand(self, rhs: Self) -> Self::Output {
-        BitBoard::from_shifted(self.board & rhs.board)
+        (self.board & rhs.board).into()
     }
 }
 
@@ -35,7 +35,8 @@ impl BitXor for BitBoard {
     type Output = BitBoard;
 
     fn bitxor(self, rhs: Self) -> Self::Output {
-        BitBoard::from_shifted(self.board ^ rhs.board)
+        // BitBoard::from_shifted(self.board ^ rhs.board)
+        (self.board ^ rhs.board).into()
     }
 }
 
@@ -49,7 +50,7 @@ impl Shl for BitBoard {
     type Output = BitBoard;
 
     fn shl(self, rhs: Self) -> Self::Output {
-        BitBoard::from_shifted(self.board << rhs.board)
+        (self.board << rhs.board).into()
     }
 }
 
@@ -57,7 +58,7 @@ impl Shr for BitBoard {
     type Output = BitBoard;
 
     fn shr(self, rhs: Self) -> Self::Output {
-        BitBoard::from_shifted(self.board >> rhs.board)
+        (self.board >> rhs.board).into()
     }
 }
 
@@ -65,6 +66,6 @@ impl Not for BitBoard {
     type Output = BitBoard;
 
     fn not(self) -> Self::Output {
-        BitBoard::from_shifted(!self.board)
+        (!self.board).into()
     }
 }

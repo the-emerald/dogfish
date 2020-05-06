@@ -4,6 +4,8 @@ use std::fmt;
 use std::fmt::Formatter;
 use itertools::Itertools;
 use std::borrow::Borrow;
+use crate::board_representation::square::Square;
+use std::convert::TryFrom;
 
 pub mod files;
 pub mod ranks;
@@ -16,26 +18,24 @@ pub struct BitBoard {
 }
 
 impl BitBoard {
-    pub const fn zero() -> Self {
-        Self {
-            board: 0
-        }
-    }
-
-    pub const fn from_square(val: u64) -> Self {
-        Self {
-            board: 1u64 << val
-        }
-    }
-
-    pub const fn from_shifted(val: u64) -> Self {
-        Self {
-            board: val
-        }
-    }
-
     pub fn iter_bits(self) -> impl Iterator<Item = bool> {
         (0..64).rev().map(move |x| (self.board >> x) & 1 == 1)
+    }
+}
+
+impl From<u64> for BitBoard {
+    fn from(value: u64) -> Self {
+        Self {
+            board: value
+        }
+    }
+}
+
+impl From<Square> for BitBoard {
+    fn from(value: Square) -> Self {
+        Self {
+            board: 1u64 << value.value()
+        }
     }
 }
 
