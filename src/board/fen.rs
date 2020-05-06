@@ -3,7 +3,6 @@ use crate::board::{Board};
 use crate::board::piecetype::PieceType;
 use anyhow::anyhow;
 use crate::board::castling::CastlingRights;
-use crate::board_representation::bitboard::BitBoard;
 use crate::board::colour::Colour;
 use crate::board_representation::square::Square;
 use std::convert::TryInto;
@@ -37,56 +36,56 @@ impl FromStr for Board {
                 let val: Square = ((7 - (idx as u64)) * 8 + file).try_into()?;
                 match char {
                     'P' => {
-                        board.set_piece(val, PieceType::P, Colour::White);
+                        board.set_piece(val, Colour::White, PieceType::P);
                         file += 1;
                     },
                     'p' => {
-                        board.set_piece(val, PieceType::P, Colour::Black);
+                        board.set_piece(val, Colour::Black, PieceType::P);
                         file += 1;
                     },
 
                     'N' => {
-                        board.set_piece(val, PieceType::N, Colour::White);
+                        board.set_piece(val, Colour::White, PieceType::N);
                         file += 1;
                     },
                     'n' => {
-                        board.set_piece(val, PieceType::N, Colour::Black);
+                        board.set_piece(val, Colour::Black, PieceType::N);
                         file += 1;
                     },
 
                     'B' => {
-                        board.set_piece(val, PieceType::B, Colour::White);
+                        board.set_piece(val, Colour::White, PieceType::B);
                         file += 1;
                     },
                     'b' => {
-                        board.set_piece(val, PieceType::B, Colour::Black);
+                        board.set_piece(val, Colour::Black, PieceType::B);
                         file += 1;
                     },
 
                     'R' => {
-                        board.set_piece(val, PieceType::R, Colour::White);
+                        board.set_piece(val, Colour::White, PieceType::R);
                         file += 1;
                     },
                     'r' => {
-                        board.set_piece(val, PieceType::R, Colour::Black);
+                        board.set_piece(val, Colour::Black, PieceType::R);
                         file += 1;
                     },
 
                     'Q' => {
-                        board.set_piece(val, PieceType::Q, Colour::White);
+                        board.set_piece(val, Colour::White, PieceType::Q);
                         file += 1;
                     },
                     'q' => {
-                        board.set_piece(val, PieceType::Q, Colour::Black);
+                        board.set_piece(val, Colour::Black, PieceType::Q);
                         file += 1;
                     },
 
                     'K' => {
-                        board.set_piece(val, PieceType::K, Colour::White);
+                        board.set_piece(val, Colour::White, PieceType::K);
                         file += 1;
                     },
                     'k' => {
-                        board.set_piece(val, PieceType::K, Colour::Black);
+                        board.set_piece(val, Colour::Black, PieceType::K);
                         file += 1;
                     },
 
@@ -148,7 +147,7 @@ impl FromStr for Board {
                     None => {
                         return Err(anyhow!("invalid castling rights detected in FEN"))
                     }
-                    Some(p) if (p.piece_type().unwrap() != PieceType::R || p.colour().unwrap() != Colour::White)=> {
+                    Some(p) if (p.piece_type() != PieceType::R || p.colour() != Colour::White)=> {
                         return Err(anyhow!("invalid castling rights detected in FEN"))
                     }
                     _ => {}
@@ -165,8 +164,8 @@ impl FromStr for Board {
                         return Err(anyhow!("invalid castling rights detected in FEN"))
                     }
                     Some(p)
-                    if (p.piece_type().unwrap() != PieceType::R ||
-                        p.colour().unwrap() != Colour::Black) => {
+                    if (p.piece_type() != PieceType::R ||
+                        p.colour() != Colour::Black) => {
 
                         return Err(anyhow!("invalid castling rights detected in FEN"))
                     }

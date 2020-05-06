@@ -51,13 +51,13 @@ impl Board {
         }
     }
 
-    pub fn set_piece(&mut self, square: Square, piece: PieceType, colour: Colour) {
+    pub fn set_piece(&mut self, square: Square, colour: Colour, piece_type: PieceType) {
         // Set bitboards
-        self.bb_pieces[piece as usize] |= square.into();
+        self.bb_pieces[piece_type as usize] |= square.into();
         self.bb_player[colour as usize] |= square.into();
 
         // Set mailbox
-        self.mailbox.set_piece(square, piece, colour);
+        self.mailbox.set_piece(square, colour, piece_type);
     }
 
     pub fn remove_piece(&mut self, square: u64) {

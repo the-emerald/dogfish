@@ -1,7 +1,6 @@
-use num_derive::FromPrimitive;
-use num_traits::FromPrimitive;
+use crate::board::piece::Piece;
 
-#[derive(Copy, Clone, FromPrimitive, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 #[repr(u8)]
 pub enum PieceType {
     P = 0,
@@ -10,4 +9,10 @@ pub enum PieceType {
     R = 3,
     Q = 4,
     K = 5
+}
+
+impl From<Piece> for PieceType {
+    fn from(value: Piece) -> Self {
+        value.piece_type()
+    }
 }

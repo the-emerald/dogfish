@@ -1,9 +1,14 @@
-use num_derive::FromPrimitive;
-use num_traits::FromPrimitive;
+use crate::board::piece::Piece;
 
-#[derive(Clone, Copy, FromPrimitive, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, PartialEq)]
 #[repr(u8)]
 pub enum Colour {
     White = 0,
     Black = 1,
+}
+
+impl From<Piece> for Colour {
+    fn from(value: Piece) -> Self {
+        value.colour()
+    }
 }

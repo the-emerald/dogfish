@@ -3,9 +3,7 @@ use std::str::FromStr;
 use std::fmt;
 use std::fmt::Formatter;
 use itertools::Itertools;
-use std::borrow::Borrow;
 use crate::board_representation::square::Square;
-use std::convert::TryFrom;
 
 pub mod files;
 pub mod ranks;

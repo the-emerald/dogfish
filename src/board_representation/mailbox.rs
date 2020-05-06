@@ -14,8 +14,8 @@ impl Mailbox {
         }
     }
 
-    pub fn set_piece(&mut self, square: Square, piece: PieceType, colour: Colour) {
-        self.pieces[square.value() as usize] = Some(Piece::from(piece, colour));
+    pub fn set_piece(&mut self, square: Square, colour: Colour, piece_type: PieceType) {
+        self.pieces[square.value() as usize] = Some((colour, piece_type).into());
     }
 
     pub fn remove_piece(&mut self, square: usize) {
