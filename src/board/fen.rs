@@ -36,56 +36,56 @@ impl FromStr for Board {
                 let val: Square = ((7 - (idx as u64)) * 8 + file).try_into()?;
                 match char {
                     'P' => {
-                        board.set_piece(val, Colour::White, PieceType::P);
+                        board.set_piece(val, (Colour::White, PieceType::P).into());
                         file += 1;
                     },
                     'p' => {
-                        board.set_piece(val, Colour::Black, PieceType::P);
+                        board.set_piece(val, (Colour::Black, PieceType::P).into());
                         file += 1;
                     },
 
                     'N' => {
-                        board.set_piece(val, Colour::White, PieceType::N);
+                        board.set_piece(val, (Colour::White, PieceType::N).into());
                         file += 1;
                     },
                     'n' => {
-                        board.set_piece(val, Colour::Black, PieceType::N);
+                        board.set_piece(val, (Colour::Black, PieceType::N).into());
                         file += 1;
                     },
 
                     'B' => {
-                        board.set_piece(val, Colour::White, PieceType::B);
+                        board.set_piece(val, (Colour::White, PieceType::B).into());
                         file += 1;
                     },
                     'b' => {
-                        board.set_piece(val, Colour::Black, PieceType::B);
+                        board.set_piece(val, (Colour::Black, PieceType::B).into());
                         file += 1;
                     },
 
                     'R' => {
-                        board.set_piece(val, Colour::White, PieceType::R);
+                        board.set_piece(val, (Colour::White, PieceType::R).into());
                         file += 1;
                     },
                     'r' => {
-                        board.set_piece(val, Colour::Black, PieceType::R);
+                        board.set_piece(val, (Colour::Black, PieceType::R).into());
                         file += 1;
                     },
 
                     'Q' => {
-                        board.set_piece(val, Colour::White, PieceType::Q);
+                        board.set_piece(val, (Colour::White, PieceType::Q).into());
                         file += 1;
                     },
                     'q' => {
-                        board.set_piece(val, Colour::Black, PieceType::Q);
+                        board.set_piece(val, (Colour::Black, PieceType::Q).into());
                         file += 1;
                     },
 
                     'K' => {
-                        board.set_piece(val, Colour::White, PieceType::K);
+                        board.set_piece(val, (Colour::White, PieceType::K).into());
                         file += 1;
                     },
                     'k' => {
-                        board.set_piece(val, Colour::Black, PieceType::K);
+                        board.set_piece(val, (Colour::Black, PieceType::K).into());
                         file += 1;
                     },
 
