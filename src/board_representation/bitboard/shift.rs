@@ -1,6 +1,7 @@
 use crate::board_representation::bitboard::BitBoard;
 use crate::board_representation::bitboard::files::{FILE_H_BITBOARD, FILE_A_BITBOARD};
 
+#[derive(Copy, Clone)]
 pub enum Direction {
     North,
     NorthEast,
