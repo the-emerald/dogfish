@@ -2,6 +2,8 @@ use crate::piece::Piece;
 use crate::board_representation::bitboard::BitBoard;
 use crate::piece::piecetype::PieceType;
 
+pub mod knight;
+
 impl Piece {
     pub fn attack(self, bitboard: BitBoard) -> BitBoard {
         match self.piece_type {

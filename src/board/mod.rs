@@ -1,5 +1,4 @@
 use std::sync::Arc;
-use anyhow::anyhow;
 use crate::board_representation::bitboard::BitBoard;
 use crate::board_representation::mailbox::Mailbox;
 use crate::board_representation::square::Square;

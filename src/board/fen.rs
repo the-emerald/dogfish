@@ -1,11 +1,17 @@
 use std::str::FromStr;
 use crate::board::{Board};
-use anyhow::anyhow;
 use crate::board::castling::CastlingRights;
 use crate::board_representation::square::Square;
 use std::convert::TryInto;
 use crate::piece::colour::Colour;
 use crate::piece::piecetype::PieceType;
+use crate::board_representation;
+
+#[derive(thiserror::Error, Debug)]
+pub enum ParseError {
+    #[error("invalid square in FEN: {0}")]
+    SquareParseFailure(#[from] board_representation::square::ParseError)
+}
 
 impl FromStr for Board {
     type Err = anyhow::Error;

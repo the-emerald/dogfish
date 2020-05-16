@@ -1,5 +1,3 @@
-use anyhow::anyhow;
-use std::str::FromStr;
 use std::fmt;
 use std::fmt::Formatter;
 use itertools::Itertools;
@@ -16,6 +14,12 @@ pub struct BitBoard {
 }
 
 impl BitBoard {
+    pub const fn new(board: u64) -> Self{
+        Self {
+            board
+        }
+    }
+
     pub fn iter_bits(self) -> impl Iterator<Item = bool> {
         (0..64).rev().map(move |x| (self.board >> x) & 1 == 1)
     }
@@ -34,14 +38,6 @@ impl From<Square> for BitBoard {
         Self {
             board: 1u64 << value.value()
         }
-    }
-}
-
-impl FromStr for BitBoard {
-    type Err = anyhow::Error;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        unimplemented!()
     }
 }
 

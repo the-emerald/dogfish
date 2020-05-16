@@ -1,22 +1,30 @@
 use std::convert::TryFrom;
-use anyhow::anyhow;
+use crate::board_representation::square::ParseError::{InvalidSquare, InvalidRankFile};
+
+#[derive(thiserror::Error, Debug)]
+pub enum ParseError {
+    #[error("square was {0} (must be 0..64)")]
+    InvalidSquare(u64),
+    #[error("rank/file was {0:?} (must be a..h 1..=8)")]
+    InvalidRankFile((char, char))
+}
 
 #[derive(Copy, Clone, Eq, PartialEq)]
 pub struct Square(u64);
 
 impl TryFrom<u64> for Square {
-    type Error = anyhow::Error;
+    type Error = ParseError;
 
     fn try_from(value: u64) -> Result<Self, Self::Error> {
         if !Square::valid_square(value) {
-            return Err(anyhow!("attempted to create invalid square from u64"));
+            return Err(InvalidSquare(value));
         }
         Ok(Square(value))
     }
 }
 
 impl TryFrom<(char, char)> for Square {
-    type Error = anyhow::Error;
+    type Error = ParseError;
 
     fn try_from(value: (char, char)) -> Result<Self, Self::Error> {
         let mut square: u64 = 0;
@@ -44,7 +52,7 @@ impl TryFrom<(char, char)> for Square {
                 square += 7;
             }
             _ => {
-                return Err(anyhow!("attempted to create invalid square from ([char], char)"));
+                return Err(InvalidRankFile(value));
             }
         }
         match value.1 {
@@ -71,7 +79,7 @@ impl TryFrom<(char, char)> for Square {
                 square += 7 * 8;
             },
             _ => {
-                return Err(anyhow!("attempted to create invalid square from (char, [char])"));
+                return Err(InvalidRankFile(value));
             }
         }
 

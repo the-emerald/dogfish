@@ -1,5 +1,3 @@
-// Define operations for bitboards
-
 use std::ops::{BitOr, BitOrAssign, BitAnd, BitAndAssign, BitXor, BitXorAssign, Shl, Shr, Not};
 use crate::board_representation::bitboard::BitBoard;
 
