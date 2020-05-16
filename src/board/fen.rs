@@ -6,29 +6,49 @@ use std::convert::TryInto;
 use crate::piece::colour::Colour;
 use crate::piece::piecetype::PieceType;
 use crate::board_representation;
+use crate::board::fen::ParseError::{Size, Rank, PiecePosition, Unrecognised, Castling, EnPassant};
+use crate::piece::Piece;
+use std::num::ParseIntError;
 
 #[derive(thiserror::Error, Debug)]
 pub enum ParseError {
-    #[error("invalid square in FEN: {0}")]
-    SquareParseFailure(#[from] board_representation::square::ParseError)
+    #[error("invalid square: {0}")]
+    SquareParse(#[from] board_representation::square::ParseError),
+    #[error("invalid number of fields: {0}, expected 6")]
+    Size(usize),
+    #[error("invalid number of ranks")]
+    Rank,
+    #[error("invalid number of files")]
+    File,
+    #[error("invalid piece position")]
+    PiecePosition,
+    #[error("invalid castling state")]
+    Castling,
+    #[error("invalid en passant")]
+    EnPassant,
+    #[error("unrecognised token found: {0}")]
+    Unrecognised(String),
+    #[error("expected number: {0}")]
+    NotNumber(#[from] ParseIntError),
+
 }
 
 impl FromStr for Board {
-    type Err = anyhow::Error;
+    type Err = ParseError;
 
-    fn from_str(s: &str) -> anyhow::Result<Self> {
+    fn from_str(s: &str) -> Result<Self, ParseError> {
         let mut board = Board::new();
 
         // Check if there are enough parts for the FEN
         let v: Vec<&str> = s.trim().split(' ').collect();
         if v.len() != 6 {
-            return Err(anyhow!("invalid FEN size"));
+            return Err(Size(v.len()));
         }
 
         // Check if there are 8 ranks to use
         let pieces: Vec<&str> = v[0].trim().split('/').collect();
         if pieces.len() != 8 {
-            return Err(anyhow!("invalid number of ranks in FEN"));
+            return Err(Rank);
         }
 
         // Pieces
@@ -37,7 +57,7 @@ impl FromStr for Board {
 
             for char in rank_str.chars() {
                 if file >= 8 {
-                    return Err(anyhow!("invalid piece positioning in FEN"))
+                    return Err(PiecePosition)
                 }
                 let val: Square = ((7 - (idx as u64)) * 8 + file).try_into()?;
                 match char {
@@ -105,7 +125,7 @@ impl FromStr for Board {
                     '8' => { file += 8 },
 
                     _ => {
-                        return Err(anyhow!("invalid value in FEN"));
+                        return Err(Unrecognised(char.to_string()));
                     }
                 }
             }
@@ -120,7 +140,7 @@ impl FromStr for Board {
                 Colour::Black
             }
             _ => {
-                return Err(anyhow!("invalid player to move in FEN"));
+                return Err(Unrecognised(v[1].into()));
             }
         };
 
@@ -140,7 +160,7 @@ impl FromStr for Board {
                     board.castling_rights[Colour::Black as usize][CastlingRights::QueenSide as usize] = true;
                 }
                 _ => {
-                    return Err(anyhow!("invalid symbol for castling rights in FEN"))
+                    return Err(Unrecognised(char.to_string()))
                 }
             }
         }
@@ -151,10 +171,10 @@ impl FromStr for Board {
             if *wc.0 {
                 match board.mailbox.get_piece((*wc.1).try_into()?) {
                     None => {
-                        return Err(anyhow!("invalid castling rights detected in FEN"))
+                        return Err(Castling)
                     }
                     Some(p) if (p.piece_type() != PieceType::R || p.colour() != Colour::White)=> {
-                        return Err(anyhow!("invalid castling rights detected in FEN"))
+                        return Err(Castling)
                     }
                     _ => {}
                 }
@@ -167,13 +187,13 @@ impl FromStr for Board {
             if *bc.0 {
                 match board.mailbox.get_piece((*bc.1).try_into()?) {
                     None => {
-                        return Err(anyhow!("invalid castling rights detected in FEN"))
+                        return Err(Castling)
                     }
                     Some(p)
                     if (p.piece_type() != PieceType::R ||
                         p.colour() != Colour::Black) => {
 
-                        return Err(anyhow!("invalid castling rights detected in FEN"))
+                        return Err(Castling)
                     }
                     _ => {}
                 }
@@ -189,7 +209,7 @@ impl FromStr for Board {
                         ep_square.into()
                     },
                     _ => {
-                        return Err(anyhow!("invalid en passant position in FEN"))
+                        return Err(EnPassant)
                     }
                 }
             }
@@ -218,7 +238,7 @@ mod tests {
     use crate::piece::colour::Colour;
 
     #[test]
-    #[should_panic(expected = "FEN")]
+    #[should_panic()]
     fn fen_parse_non_fen() {
         let fen_str = "cat dog meow woof";
         let board: Board = fen_str.parse().unwrap();
@@ -243,14 +263,14 @@ mod tests {
     }
 
     #[test]
-    #[should_panic(expected = "castling")]
+    #[should_panic(expected = "Castling")]
     fn fen_parse_invalid_castling_black_kingside() {
         let fen_str = "r3k1r1/pp3ppp/2pp1nb1/q2Pp3/P3P3/2N5/1PP2PPP/R3K2R w KQkq e6 0 1";
         let board: Board = fen_str.parse().unwrap();
     }
 
     #[test]
-    #[should_panic(expected = "piece")]
+    #[should_panic(expected = "PiecePosition")]
     fn fen_parse_invalid_spacing() {
         // Notice the 2pp2nb1
         let fen_str = "r3k1r1/pp3ppp/2pp2nb1/q2Pp3/P3P3/2N5/1PP2PPP/R3K2R w KQq e6 0 1";

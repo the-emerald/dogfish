@@ -7,7 +7,6 @@ edition = "2018"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow = "1.0.28" # Deprecated, waiting for thiserror refactor
 itertools = "0.9.0"
 thiserror = "1.0.17"
 
