@@ -4,6 +4,7 @@ use crate::piece::colour::Colour;
 use crate::piece::piecetype::PieceType::{P, N, K, Q, R, B};
 
 pub mod knight;
+pub mod king;
 
 #[cfg(debug_assertions)]
 fn piecetype_ne_panic(lhs: PieceType, rhs: PieceType) {
