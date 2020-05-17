@@ -23,31 +23,31 @@ impl PieceType {
         unimplemented!()
     }
 
-    pub fn knight_attack(self) -> BitBoard {
+    pub fn knight_attack(self, square: Square) -> BitBoard {
         #[cfg(debug_assertions)]
             piecetype_ne_panic(N, self);
         unimplemented!()
     }
 
-    pub fn bishop_attack(self, square: Square, colour: Colour, occupancy: BitBoard) -> BitBoard {
+    pub fn bishop_attack(self, square: Square, occupancy: BitBoard) -> BitBoard {
         #[cfg(debug_assertions)]
             piecetype_ne_panic(B, self);
         unimplemented!()
     }
 
-    pub fn rook_attack(self, square: Square, colour: Colour, occupancy: BitBoard) -> BitBoard {
+    pub fn rook_attack(self, square: Square, occupancy: BitBoard) -> BitBoard {
         #[cfg(debug_assertions)]
             piecetype_ne_panic(R, self);
         unimplemented!()
     }
 
-    pub fn queen_attack(self, square: Square, colour: Colour, occupancy: BitBoard) -> BitBoard {
+    pub fn queen_attack(self, square: Square, occupancy: BitBoard) -> BitBoard {
         #[cfg(debug_assertions)]
             piecetype_ne_panic(Q, self);
         unimplemented!()
     }
 
-    pub fn king_attack(self, square: Square, colour: Colour) -> BitBoard {
+    pub fn king_attack(self, square: Square) -> BitBoard {
         #[cfg(debug_assertions)]
             piecetype_ne_panic(K, self);
         unimplemented!()

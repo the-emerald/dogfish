@@ -1,12 +1,15 @@
 use std::convert::TryFrom;
 use crate::board_representation::square::ParseError::{InvalidSquare, InvalidRankFile};
+use crate::board_representation::bitboard::BitBoard;
 
 #[derive(thiserror::Error, Debug)]
 pub enum ParseError {
     #[error("square was {0} (must be 0..64)")]
     InvalidSquare(u64),
     #[error("rank/file was {0:?} (must be a..h 1..=8)")]
-    InvalidRankFile((char, char))
+    InvalidRankFile((char, char)),
+    #[error("bitboard contained >1 pieces")]
+    BitBoardNotUnit
 }
 
 #[derive(Copy, Clone, Eq, PartialEq)]
@@ -84,6 +87,14 @@ impl TryFrom<(char, char)> for Square {
         }
 
         Ok(Square(square))
+    }
+}
+
+impl TryFrom<BitBoard> for Square {
+    type Error = ParseError;
+
+    fn try_from(value: BitBoard) -> Result<Self, Self::Error> {
+        unimplemented!()
     }
 }
 
