@@ -2,6 +2,9 @@ use crate::board_representation::bitboard::BitBoard;
 use crate::piece::piecetype::PieceType;
 use crate::piece::colour::Colour;
 use crate::piece::piecetype::PieceType::{P, N, K, Q, R, B};
+use crate::board_representation::bitboard::shift::Direction::North;
+use crate::board_representation::bitboard::shift::Direction;
+use crate::board_representation::square::Square;
 
 pub mod knight;
 pub mod king;
@@ -13,22 +16,8 @@ fn piecetype_ne_panic(lhs: PieceType, rhs: PieceType) {
     }
 }
 
-// impl Piece {
-//     pub fn attack(self, bitboard: BitBoard) -> BitBoard {
-//         match self.piece_type {
-//             PieceType::P => {}, // WTF
-//             PieceType::N => {}, // Lookup
-//             PieceType::B => {}, // Sliding
-//             PieceType::R => {}, // Sliding
-//             PieceType::Q => {}, // Sliding
-//             PieceType::K => {}, // Lookup
-//         }
-//         unimplemented!()
-//     }
-// }
-
 impl PieceType {
-    pub fn pawn_attack(self, colour: Colour) -> BitBoard {
+    pub fn pawn_attack(self, square: Square, colour: Colour) -> BitBoard {
         #[cfg(debug_assertions)]
             piecetype_ne_panic(P, self);
         unimplemented!()
@@ -40,25 +29,25 @@ impl PieceType {
         unimplemented!()
     }
 
-    pub fn bishop_attack(self, colour: Colour, occupancy: BitBoard) -> BitBoard {
+    pub fn bishop_attack(self, square: Square, colour: Colour, occupancy: BitBoard) -> BitBoard {
         #[cfg(debug_assertions)]
             piecetype_ne_panic(B, self);
         unimplemented!()
     }
 
-    pub fn rook_attack(self, colour: Colour, occupancy: BitBoard) -> BitBoard {
+    pub fn rook_attack(self, square: Square, colour: Colour, occupancy: BitBoard) -> BitBoard {
         #[cfg(debug_assertions)]
             piecetype_ne_panic(R, self);
         unimplemented!()
     }
 
-    pub fn queen_attack(self, colour: Colour, occupancy: BitBoard) -> BitBoard {
+    pub fn queen_attack(self, square: Square, colour: Colour, occupancy: BitBoard) -> BitBoard {
         #[cfg(debug_assertions)]
             piecetype_ne_panic(Q, self);
         unimplemented!()
     }
 
-    pub fn king_attack(self, colour: Colour) -> BitBoard {
+    pub fn king_attack(self, square: Square, colour: Colour) -> BitBoard {
         #[cfg(debug_assertions)]
             piecetype_ne_panic(K, self);
         unimplemented!()
