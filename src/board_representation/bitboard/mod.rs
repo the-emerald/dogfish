@@ -41,6 +41,12 @@ impl From<Square> for BitBoard {
     }
 }
 
+impl From<BitBoard> for u64 {
+    fn from(value: BitBoard) -> Self {
+        value.board
+    }
+}
+
 impl fmt::Display for BitBoard {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         write!(f, "{}", format!("{:#018x}", self.board))

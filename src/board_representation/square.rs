@@ -1,5 +1,5 @@
-use std::convert::TryFrom;
-use crate::board_representation::square::ParseError::{InvalidSquare, InvalidRankFile};
+use std::convert::{TryFrom, TryInto};
+use crate::board_representation::square::ParseError::{InvalidSquare, InvalidRankFile, BitBoardNotUnit};
 use crate::board_representation::bitboard::BitBoard;
 
 #[derive(thiserror::Error, Debug)]
@@ -94,7 +94,10 @@ impl TryFrom<BitBoard> for Square {
     type Error = ParseError;
 
     fn try_from(value: BitBoard) -> Result<Self, Self::Error> {
-        unimplemented!()
+        if value & (value - 1_u64.into()) != 0_u64.into() {
+            return Err(BitBoardNotUnit);
+        }
+        Ok((u64::from(value).trailing_zeros() as u64).try_into().unwrap())
     }
 }
 
