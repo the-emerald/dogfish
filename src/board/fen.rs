@@ -7,7 +7,6 @@ use crate::piece::colour::Colour;
 use crate::piece::piecetype::PieceType;
 use crate::board_representation;
 use crate::board::fen::ParseError::{Size, Rank, PiecePosition, Unrecognised, Castling, EnPassant};
-use crate::piece::Piece;
 use std::num::ParseIntError;
 
 #[derive(thiserror::Error, Debug)]
