@@ -9,47 +9,28 @@ use crate::board_representation::square::Square;
 pub mod knight;
 pub mod king;
 
-#[cfg(debug_assertions)]
-fn piecetype_ne_panic(lhs: PieceType, rhs: PieceType) {
-    if lhs != rhs {
-        panic!("attempted to use {:?} attacks with {:?}", lhs, rhs);
-    }
-}
-
 impl PieceType {
-    pub fn pawn_attack(self, square: Square, colour: Colour) -> BitBoard {
-        #[cfg(debug_assertions)]
-            piecetype_ne_panic(P, self);
+    pub fn pawn_attack(pawns: BitBoard, colour: Colour) -> BitBoard {
         unimplemented!()
     }
 
-    pub fn knight_attack(self, square: Square) -> BitBoard {
-        #[cfg(debug_assertions)]
-            piecetype_ne_panic(N, self);
+    pub fn knight_attack(square: Square) -> BitBoard {
         unimplemented!()
     }
 
-    pub fn bishop_attack(self, square: Square, occupancy: BitBoard) -> BitBoard {
-        #[cfg(debug_assertions)]
-            piecetype_ne_panic(B, self);
+    pub fn bishop_attack(square: Square, occupancy: BitBoard) -> BitBoard {
         unimplemented!()
     }
 
-    pub fn rook_attack(self, square: Square, occupancy: BitBoard) -> BitBoard {
-        #[cfg(debug_assertions)]
-            piecetype_ne_panic(R, self);
+    pub fn rook_attack(square: Square, occupancy: BitBoard) -> BitBoard {
         unimplemented!()
     }
 
-    pub fn queen_attack(self, square: Square, occupancy: BitBoard) -> BitBoard {
-        #[cfg(debug_assertions)]
-            piecetype_ne_panic(Q, self);
+    pub fn queen_attack(square: Square, occupancy: BitBoard) -> BitBoard {
         unimplemented!()
     }
 
-    pub fn king_attack(self, square: Square) -> BitBoard {
-        #[cfg(debug_assertions)]
-            piecetype_ne_panic(K, self);
+    pub fn king_attack(square: Square) -> BitBoard {
         unimplemented!()
     }
 }
