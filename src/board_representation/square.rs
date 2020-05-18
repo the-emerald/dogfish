@@ -101,6 +101,12 @@ impl TryFrom<BitBoard> for Square {
     }
 }
 
+impl From<Square> for u64 {
+    fn from(value: Square) -> Self {
+        value.0
+    }
+}
+
 impl Square {
     pub fn valid_square(sq: u64) -> bool {
         (0..64).contains(&sq)
