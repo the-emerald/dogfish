@@ -3,8 +3,7 @@ use std::fmt::Formatter;
 use itertools::Itertools;
 use crate::board_representation::square::Square;
 
-pub mod files;
-pub mod ranks;
+pub mod files_ranks;
 pub mod shift;
 pub mod ops;
 
@@ -22,6 +21,14 @@ impl BitBoard {
 
     pub fn iter_bits(self) -> impl Iterator<Item = bool> {
         (0..64).rev().map(move |x| (self.board >> x) & 1 == 1)
+    }
+
+    pub fn bitboard_of_rank(square: Square) -> Self {
+        unimplemented!()
+    }
+
+    pub fn bitboard_of_file(square: Square) -> Self {
+        unimplemented!()
     }
 }
 

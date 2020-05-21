@@ -1,5 +1,5 @@
 use crate::board_representation::bitboard::BitBoard;
-use crate::board_representation::bitboard::files::{FILE_H_BITBOARD, FILE_A_BITBOARD};
+use crate::board_representation::bitboard::files_ranks::{FILE_H_BITBOARD, FILE_A_BITBOARD};
 
 #[derive(Copy, Clone)]
 pub enum Direction {
@@ -31,8 +31,7 @@ impl BitBoard {
 mod tests {
     use crate::board_representation::bitboard::BitBoard;
     use crate::board_representation::bitboard::shift::Direction;
-    use crate::board_representation::bitboard::ranks::{RANK_1_BITBOARD, RANK_2_BITBOARD, RANK_3_BITBOARD, RANK_8_BITBOARD, RANK_7_BITBOARD};
-    use crate::board_representation::bitboard::files::{FILE_A_BITBOARD, FILE_B_BITBOARD, FILE_H_BITBOARD, FILE_G_BITBOARD};
+    use crate::board_representation::bitboard::files_ranks::{FILE_A_BITBOARD, FILE_B_BITBOARD, FILE_H_BITBOARD, FILE_G_BITBOARD, RANK_2_BITBOARD, RANK_1_BITBOARD, RANK_8_BITBOARD, RANK_7_BITBOARD};
 
     #[test]
     fn shift_north() {
