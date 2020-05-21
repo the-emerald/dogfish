@@ -1,6 +1,7 @@
 use std::convert::{TryFrom, TryInto};
 use crate::board_representation::square::ParseError::{InvalidSquare, InvalidRankFile, BitBoardNotUnit};
 use crate::board_representation::bitboard::BitBoard;
+use crate::board_representation::bitboard::shift::Direction;
 
 #[derive(thiserror::Error, Debug)]
 pub enum ParseError {
@@ -114,5 +115,10 @@ impl Square {
 
     pub const fn value(self) -> u64 {
         self.0
+    }
+
+    // TODO: Check if this is slow
+    pub fn shift(self, direction: Direction) -> Self {
+        unimplemented!()
     }
 }

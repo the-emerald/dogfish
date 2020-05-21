@@ -17,9 +17,9 @@ impl PieceType {
             Colour::White => {[NorthEast, NorthWest]},
             Colour::Black => {[SouthEast, SouthWest]},
         };
-
-        BitBoard::shift(attack_pattern[0], pawns) |
-        BitBoard::shift(attack_pattern[1], pawns)
+        
+        pawns.shift(attack_pattern[0]) |
+        pawns.shift(attack_pattern[1])
     }
 
     pub fn knight_attack(square: Square) -> BitBoard {

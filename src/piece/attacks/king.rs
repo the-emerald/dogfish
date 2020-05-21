@@ -17,7 +17,10 @@ pub static ATTACK_TABLE_KING: Lazy<[BitBoard; 64]> = Lazy::new(|| {
     for (square, bitboard) in bbs.iter_mut().enumerate() {
         // Apply the eight directions once
         *bitboard = KING_ATTACKS.iter().fold(0_u64.into(), |acc, step| {
-            acc | BitBoard::shift(*step, Square::try_from(square as u64).unwrap().into())
+            acc | {
+                let b: BitBoard = Square::try_from(square as u64).unwrap().into();
+                b.shift(*step)
+            }
         });
     }
     bbs

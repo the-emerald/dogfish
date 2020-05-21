@@ -26,7 +26,7 @@ pub static ATTACK_TABLE_KNIGHT: Lazy<[BitBoard; 64]> = Lazy::new(|| {
                 | steps.iter().fold(
                     // Apply the 3 shifts
                     BitBoard::from(Square::try_from(square as u64).unwrap()),
-                    |square, step| BitBoard::shift(*step, square),
+                    |square, step| square.shift(*step),
                 )
         })
     }
