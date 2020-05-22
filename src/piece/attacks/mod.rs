@@ -51,13 +51,15 @@ impl PieceType {
 
     pub fn sliding_attack(attack_directions: [Direction; 4], square: Square, occupancy: BitBoard) -> BitBoard {
         let mut attacks: BitBoard = 0.into();
-        let mut next: BitBoard = square.into();
 
         for direction in attack_directions.iter() {
-            next = next.shift(*direction);
+            let mut next = BitBoard::from(square).shift(*direction);
             // First: Bitboard of square is not empty
             // Second: No piece occupies that square
             while BitBoard::from(next) != BitBoard::new(0) && (occupancy & next.into()) == 0.into() {
+                // println!("{:?}", next);
+                // println!("{:?}", occupancy);
+                // println!("-----");
                 attacks |= next;
                 next = next.shift(*direction);
             }
@@ -72,6 +74,7 @@ mod tests {
     use crate::board_representation::square::Square;
     use std::convert::TryFrom;
     use crate::piece::piecetype::PieceType;
+    use crate::board_representation::bitboard::shift::Direction::{North, East, South, West};
 
     #[test]
     fn rook() {
@@ -80,5 +83,15 @@ mod tests {
 
         let attacks = PieceType::rook_attack(a1, occupancy);
         println!("{:?}", attacks);
+    }
+
+    #[test]
+    fn sliding_attacks() {
+        let occupancy = BitBoard::new(0x100000000);
+        let a1 = Square::try_from(0).unwrap();
+        let directions = [North, East, South, West];
+
+        let sliding = PieceType::sliding_attack(directions, a1, occupancy);
+        println!("{:?}", sliding);
     }
 }

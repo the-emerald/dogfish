@@ -38,20 +38,20 @@ pub static SLIDING_ROOK: Lazy<SlidingRook> = Lazy::new(|| {
             occupancy[size] = b;
             reference[size] = PieceType::sliding_attack(attack_directions, sq, b);
 
-            println!("Size: {}", size);
-            println!("Occp: {:?}", b);
-            println!("Mask: {:?}", magic.mask);
-            println!("Magic: {:?}", magic.magic);
-            println!("Shift: {:?}", magic.shift);
+            // println!("Size: {}", size);
+            // println!("Occp: {:?}", b);
+            // println!("Mask: {:?}", magic.mask);
+            // println!("Magic: {:?}", magic.magic);
+            // println!("Shift: {:?}", magic.shift);
 
-            let idx: usize = u64::from((b & magic.mask) * (magic.magic.into()) >> (magic.shift.into())) as usize;
+            let idx: usize = u64::from(((b & magic.mask) * (magic.magic.into())) >> (magic.shift.into())) as usize;
             table[magic.table + idx] = reference[size];
 
-            println!("{} set to: {:?}", magic.table + idx, reference[size]);
+            // println!("{} set to: {:?}", magic.table + idx, reference[size]);
 
             size += 1;
             b = (b - magic.mask) & magic.mask;
-            println!("Ok.\n-----");
+            // println!("Ok.\n-----");
             if !(b == 0.into()) {
                 break;
             }
