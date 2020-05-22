@@ -57,9 +57,6 @@ impl PieceType {
             // First: Bitboard of square is not empty
             // Second: No piece occupies that square
             while BitBoard::from(next) != BitBoard::new(0) && (occupancy & next.into()) == 0.into() {
-                // println!("{:?}", next);
-                // println!("{:?}", occupancy);
-                // println!("-----");
                 attacks |= next;
                 next = next.shift(*direction);
             }
