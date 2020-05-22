@@ -25,7 +25,7 @@ pub static SLIDING_ROOK: Lazy<SlidingRook> = Lazy::new(|| {
             ((FILE_A_BITBOARD | FILE_H_BITBOARD) & !BitBoard::bitboard_of_file(sq));
 
         magic.mask = PieceType::sliding_attack(attack_directions, sq, 0.into()) & !edges;
-        magic.magic = MAGIC_NUMBERS_ROOK[square].into();
+        magic.magic = MAGIC_NUMBERS_ROOK[square];
         magic.shift = u64::from((*magic).mask).count_ones().into();
 
         magic.table = prev_offset + size;
@@ -38,12 +38,21 @@ pub static SLIDING_ROOK: Lazy<SlidingRook> = Lazy::new(|| {
             occupancy[size] = b;
             reference[size] = PieceType::sliding_attack(attack_directions, sq, b);
 
-            let idx: usize = u64::from((b & magic.mask) * (magic.magic) >> (magic.shift.into())) as usize;
+            println!("Size: {}", size);
+            println!("Occp: {:?}", b);
+            println!("Mask: {:?}", magic.mask);
+            println!("Magic: {:?}", magic.magic);
+            println!("Shift: {:?}", magic.shift);
+
+            let idx: usize = u64::from((b & magic.mask) * (magic.magic.into()) >> (magic.shift.into())) as usize;
             table[magic.table + idx] = reference[size];
+
+            println!("{} set to: {:?}", magic.table + idx, reference[size]);
 
             size += 1;
             b = (b - magic.mask) & magic.mask;
-            if b == 0.into() {
+            println!("Ok.\n-----");
+            if !(b == 0.into()) {
                 break;
             }
         }
@@ -88,12 +97,12 @@ impl SlidingBishop {
 pub struct Magic {
     table: usize,
     mask: BitBoard,
-    magic: BitBoard,
+    magic: u64,
     shift: u64,
 }
 
 impl Magic {
-    pub fn new(table: usize, mask: BitBoard, magic: BitBoard, shift: u64) -> Self {
+    pub fn new(table: usize, mask: BitBoard, magic: u64, shift: u64) -> Self {
         Self {
             table,
             mask,
@@ -110,7 +119,7 @@ impl Magic {
         self.mask
     }
 
-    pub fn magic(self) -> BitBoard {
+    pub fn magic(self) -> u64 {
         self.magic
     }
 
@@ -124,7 +133,7 @@ impl Default for Magic {
         Self {
             table: 0,
             mask: 0.into(),
-            magic: 0.into(),
+            magic: 0,
             shift: 0,
         }
     }

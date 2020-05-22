@@ -36,7 +36,7 @@ impl PieceType {
     pub fn rook_attack(square: Square, occupancy: BitBoard) -> BitBoard {
         let magic = SLIDING_ROOK.magic[square.value() as usize];
         let idx: usize = u64::from(
-            (occupancy & magic.mask()) * (magic.magic()) >> (magic.shift().into())
+            (occupancy & magic.mask()) * (magic.magic().into()) >> (magic.shift().into())
         ) as usize;
         return SLIDING_ROOK.table[magic.table() + idx];
     }
