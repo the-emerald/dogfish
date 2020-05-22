@@ -95,9 +95,8 @@ impl TryFrom<BitBoard> for Square {
     type Error = ParseError;
 
     fn try_from(value: BitBoard) -> Result<Self, Self::Error> {
-        println!("{:?}", value);
-        let shift: BitBoard = u64::from(value).wrapping_sub(1).into();
-        if (value & shift) != 0_u64.into() {
+        // TODO: Do something for when the bitboard is empty
+        if (value & (value - 1_u64.into())) != 0_u64.into() {
             return Err(BitBoardNotUnit);
         }
         Ok((u64::from(value).trailing_zeros() as u64).try_into().unwrap())
@@ -119,10 +118,7 @@ impl Square {
         self.0
     }
 
-    // TODO: Check if this is slow
     pub fn shift(self, direction: Direction) -> Self {
-        println!("----------");
-        println!("{:?}", BitBoard::from(self));
         BitBoard::from(self).shift(direction).try_into().unwrap()
     }
 }

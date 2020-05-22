@@ -39,7 +39,6 @@ pub static SLIDING_ROOK: Lazy<SlidingRook> = Lazy::new(|| {
             reference[size] = PieceType::sliding_attack(attack_directions, sq, b);
 
             let idx: usize = u64::from((b & magic.mask) * (magic.magic) >> (magic.shift.into())) as usize;
-            println!("{}", idx);
             table[magic.table + idx] = reference[size];
 
             size += 1;
