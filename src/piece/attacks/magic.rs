@@ -26,7 +26,7 @@ pub static SLIDING_ROOK: Lazy<SlidingRook> = Lazy::new(|| {
 
         magic.mask = PieceType::sliding_attack(attack_directions, sq, 0.into()) & !edges;
         magic.magic = MAGIC_NUMBERS_ROOK[square];
-        magic.shift = u64::from((*magic).mask).count_ones().into();
+        magic.shift = 64_u64 - (u64::from(magic.mask).count_ones() as u64);
 
         magic.table = prev_offset + size;
         prev_offset = magic.table;
