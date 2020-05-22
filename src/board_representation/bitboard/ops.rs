@@ -1,4 +1,4 @@
-use std::ops::{BitOr, BitOrAssign, BitAnd, BitAndAssign, BitXor, BitXorAssign, Shl, Shr, Not, Add, Sub};
+use std::ops::{BitOr, BitOrAssign, BitAnd, BitAndAssign, BitXor, BitXorAssign, Shl, Shr, Not, Add, Sub, Mul};
 use crate::board_representation::bitboard::BitBoard;
 
 impl BitOr for BitBoard {
@@ -72,7 +72,7 @@ impl Add for BitBoard {
     type Output = BitBoard;
 
     fn add(self, rhs: Self) -> Self::Output {
-        (self.board + rhs.board).into()
+        self.board.wrapping_add(rhs.board).into()
     }
 }
 
@@ -80,6 +80,14 @@ impl Sub for BitBoard {
     type Output = BitBoard;
 
     fn sub(self, rhs: Self) -> Self::Output {
-        (self.board - rhs.board).into()
+        self.board.wrapping_sub(rhs.board).into()
+    }
+}
+
+impl Mul for BitBoard {
+    type Output = BitBoard;
+
+    fn mul(self, rhs: Self) -> Self::Output {
+        self.board.wrapping_mul(rhs.board).into()
     }
 }

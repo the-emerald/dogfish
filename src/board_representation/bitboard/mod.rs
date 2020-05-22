@@ -2,6 +2,7 @@ use std::fmt;
 use std::fmt::Formatter;
 use itertools::Itertools;
 use crate::board_representation::square::Square;
+use crate::board_representation::bitboard::files_ranks::{RANK_1_BITBOARD, FILE_A_BITBOARD};
 
 pub mod files_ranks;
 pub mod shift;
@@ -24,11 +25,13 @@ impl BitBoard {
     }
 
     pub fn bitboard_of_rank(square: Square) -> Self {
-        unimplemented!()
+        let r = square.value() >> 3;
+        RANK_1_BITBOARD << BitBoard::from((8 * r))
     }
 
     pub fn bitboard_of_file(square: Square) -> Self {
-        unimplemented!()
+        let f = square.value() & 7;
+        FILE_A_BITBOARD << BitBoard::from(f)
     }
 }
 
