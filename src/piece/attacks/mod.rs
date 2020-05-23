@@ -8,7 +8,7 @@ use crate::board_representation::square::Square;
 use crate::piece::attacks::knight::ATTACK_TABLE_KNIGHT;
 use crate::piece::attacks::king::ATTACK_TABLE_KING;
 use crate::board_representation::square::ParseError::BitBoardNotUnit;
-use crate::piece::attacks::magic::SLIDING_ROOK;
+use crate::piece::attacks::magic::{SLIDING_ROOK, SLIDING_BISHOP};
 
 pub mod knight;
 pub mod king;
@@ -30,7 +30,11 @@ impl PieceType {
     }
 
     pub fn bishop_attack(square: Square, occupancy: BitBoard) -> BitBoard {
-        unimplemented!()
+        let magic = SLIDING_BISHOP.magic[square.value() as usize];
+        let idx: usize = u64::from(
+            (occupancy & magic.mask()) * (magic.magic().into()) >> (magic.shift().into())
+        ) as usize;
+        return SLIDING_BISHOP.table[magic.table() + idx];
     }
 
     pub fn rook_attack(square: Square, occupancy: BitBoard) -> BitBoard {
@@ -81,6 +85,17 @@ mod tests {
 
         let attacks = PieceType::rook_attack(sq, occupancy);
         println!("Rook: {:?}", BitBoard::from(sq));
+        println!("Occupancy: {:?}", occupancy);
+        println!("Attacks: {:?}", attacks);
+    }
+
+    #[test]
+    fn bishop() {
+        let occupancy = BitBoard::new(0x114182002260020);
+        let sq = Square::try_from(35).unwrap();
+
+        let attacks = PieceType::bishop_attack(sq, occupancy);
+        println!("Bishop: {:?}", BitBoard::from(sq));
         println!("Occupancy: {:?}", occupancy);
         println!("Attacks: {:?}", attacks);
     }
