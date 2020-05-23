@@ -24,3 +24,9 @@ impl Mailbox {
         self.pieces[square.value() as usize]
     }
 }
+
+impl Default for Mailbox {
+    fn default() -> Self {
+        Self::new()
+    }
+}

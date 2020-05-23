@@ -202,7 +202,7 @@ impl FromStr for Board {
         // En passant square
         board.en_passant = {
             if v[3] != "-" {
-                match (v[3].chars().nth(1), v[3].chars().nth(0)) {
+                match (v[3].chars().nth(1), v[3].chars().next()) {
                     (Some(r), Some(f)) => {
                         let ep_square: Square = (f, r).try_into()?;
                         ep_square.into()
