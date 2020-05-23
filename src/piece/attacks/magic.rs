@@ -7,46 +7,64 @@ use crate::board_representation::bitboard::files_ranks::{FILE_A_BITBOARD, FILE_H
 use crate::piece::piecetype::PieceType;
 use crate::board_representation::bitboard::shift::Direction::{North, East, South, West, NorthEast, SouthWest, SouthEast, NorthWest};
 
+macro_rules! populate_magic {
+    ($table: expr, $magics: expr, $magic_numbers: expr, $atk_directions:expr) => {
+        {
+            let attack_directions = $atk_directions;
+            let mut prev_offset = 0;
+            let mut size = 0;
+
+            // Populate the magic fields
+            for (square, magic) in $magics.iter_mut().enumerate() {
+                let sq = Square::try_from(square as u64).unwrap();
+                let mut reference = [BitBoard::new(0); 4096];
+
+                let mut edges = ((RANK_1_BITBOARD | RANK_8_BITBOARD) & !BitBoard::bitboard_of_rank(sq)) |
+                    ((FILE_A_BITBOARD | FILE_H_BITBOARD) & !BitBoard::bitboard_of_file(sq));
+
+                magic.mask = PieceType::sliding_attack(attack_directions, sq, 0.into()) & !edges;
+                magic.magic = $magic_numbers[square];
+                magic.shift = 64_u64 - (u64::from(magic.mask).count_ones() as u64);
+
+                magic.table = prev_offset + size;
+                prev_offset = magic.table;
+
+                // Carry-Rippler
+                let mut b: BitBoard = 0.into();
+                size = 0;
+                loop {
+                    reference[size] = PieceType::sliding_attack(attack_directions, sq, b);
+
+                    let idx: usize = u64::from(((b & magic.mask) * (magic.magic.into())) >> (magic.shift.into())) as usize;
+                    $table[magic.table + idx] = reference[size];
+
+                    size += 1;
+                    b = (b - magic.mask) & magic.mask;
+                    if b == 0.into() {
+                        break;
+                    }
+                }
+            }
+        }
+    };
+}
+
 pub static SLIDING_ROOK: Lazy<SlidingRook> = Lazy::new(|| {
     let mut table = [BitBoard::new(0); 0x19000];
     let mut magics = [Magic::default(); 64];
 
-    let attack_directions = [North, East, South, West];
-    let mut prev_offset = 0;
-    let mut size = 0;
+    populate_magic!(table, magics, MAGIC_NUMBERS_ROOK, [North, East, South, West]);
 
-    // Populate the magic fields
-    for (square, magic) in magics.iter_mut().enumerate() {
-        let sq = Square::try_from(square as u64).unwrap();
-        let mut reference = [BitBoard::new(0); 4096];
-
-        let mut edges = ((RANK_1_BITBOARD | RANK_8_BITBOARD) & !BitBoard::bitboard_of_rank(sq)) |
-            ((FILE_A_BITBOARD | FILE_H_BITBOARD) & !BitBoard::bitboard_of_file(sq));
-
-        magic.mask = PieceType::sliding_attack(attack_directions, sq, 0.into()) & !edges;
-        magic.magic = MAGIC_NUMBERS_ROOK[square];
-        magic.shift = 64_u64 - (u64::from(magic.mask).count_ones() as u64);
-
-        magic.table = prev_offset + size;
-        prev_offset = magic.table;
-
-        // Carry-Rippler
-        let mut b: BitBoard = 0.into();
-        size = 0;
-        loop {
-            reference[size] = PieceType::sliding_attack(attack_directions, sq, b);
-
-            let idx: usize = u64::from(((b & magic.mask) * (magic.magic.into())) >> (magic.shift.into())) as usize;
-            table[magic.table + idx] = reference[size];
-
-            size += 1;
-            b = (b - magic.mask) & magic.mask;
-            if b == 0.into() {
-                break;
-            }
-        }
-    }
     SlidingRook::new(table, magics)
+});
+
+pub static SLIDING_BISHOP: Lazy<SlidingBishop> = Lazy::new(|| {
+    let mut table = [BitBoard::new(0); 0x1480];
+    let mut magics = [Magic::default(); 64];
+
+    populate_magic!(table, magics, MAGIC_NUMBERS_BISHOP, [NorthEast, SouthEast, SouthWest, NorthWest]);
+
+    SlidingBishop::new(table, magics)
 });
 
 pub struct SlidingRook {
@@ -62,49 +80,6 @@ impl SlidingRook {
         }
     }
 }
-
-// TODO: Refactor this out so it's not a copy and paste
-pub static SLIDING_BISHOP: Lazy<SlidingBishop> = Lazy::new(|| {
-    let mut table = [BitBoard::new(0); 0x1480];
-    let mut magics = [Magic::default(); 64];
-
-    let attack_directions = [NorthEast, SouthEast, SouthWest, NorthWest];
-    let mut prev_offset = 0;
-    let mut size = 0;
-
-    // Populate the magic fields
-    for (square, magic) in magics.iter_mut().enumerate() {
-        let sq = Square::try_from(square as u64).unwrap();
-        let mut reference = [BitBoard::new(0); 4096];
-
-        let mut edges = ((RANK_1_BITBOARD | RANK_8_BITBOARD) & !BitBoard::bitboard_of_rank(sq)) |
-            ((FILE_A_BITBOARD | FILE_H_BITBOARD) & !BitBoard::bitboard_of_file(sq));
-
-        magic.mask = PieceType::sliding_attack(attack_directions, sq, 0.into()) & !edges;
-        magic.magic = MAGIC_NUMBERS_BISHOP[square];
-        magic.shift = 64_u64 - (u64::from(magic.mask).count_ones() as u64);
-
-        magic.table = prev_offset + size;
-        prev_offset = magic.table;
-
-        // Carry-Rippler
-        let mut b: BitBoard = 0.into();
-        size = 0;
-        loop {
-            reference[size] = PieceType::sliding_attack(attack_directions, sq, b);
-
-            let idx: usize = u64::from(((b & magic.mask) * (magic.magic.into())) >> (magic.shift.into())) as usize;
-            table[magic.table + idx] = reference[size];
-
-            size += 1;
-            b = (b - magic.mask) & magic.mask;
-            if b == 0.into() {
-                break;
-            }
-        }
-    }
-    SlidingBishop::new(table, magics)
-});
 
 pub struct SlidingBishop {
     pub table: [BitBoard; 0x1480],
