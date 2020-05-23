@@ -75,16 +75,19 @@ mod tests {
 
     #[test]
     fn rook() {
-        let occupancy = BitBoard::new(0);
-        let a1 = Square::try_from(0).unwrap();
+        let occupancy = BitBoard::new(0x8000000000000);
+        let sq = Square::try_from(35).unwrap();
 
-        let attacks = PieceType::rook_attack(a1, occupancy);
-        println!("{:?}", attacks);
+        let attacks = PieceType::rook_attack(sq, occupancy);
+        println!("Rook: {:?}", BitBoard::from(sq));
+        println!("Occupancy: {:?}", occupancy);
+        println!("Attacks: {:?}", attacks);
     }
 
     #[test]
+    #[ignore]
     fn sliding_attacks() {
-        let occupancy = BitBoard::new(0x100000000);
+        let occupancy = BitBoard::new(0x1104000008);
         let a1 = Square::try_from(0).unwrap();
         let directions = [North, East, South, West];
 

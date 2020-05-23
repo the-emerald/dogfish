@@ -65,7 +65,7 @@ impl fmt::Display for BitBoard {
 
 impl fmt::Debug for BitBoard {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
-        let file = "\n  A B C D E F G H";
+        let file = "\n   A B C D E F G H";
         let board = self.iter_bits()
             .map(
                 |x| if x {"x "} else {". "}

@@ -18,7 +18,6 @@ pub static SLIDING_ROOK: Lazy<SlidingRook> = Lazy::new(|| {
     // Populate the magic fields
     for (square, magic) in magics.iter_mut().enumerate() {
         let sq = Square::try_from(square as u64).unwrap();
-        let mut occupancy = [BitBoard::new(0); 4096];
         let mut reference = [BitBoard::new(0); 4096];
 
         let mut edges = ((RANK_1_BITBOARD | RANK_8_BITBOARD) & !BitBoard::bitboard_of_rank(sq)) |
@@ -31,11 +30,10 @@ pub static SLIDING_ROOK: Lazy<SlidingRook> = Lazy::new(|| {
         magic.table = prev_offset + size;
         prev_offset = magic.table;
 
-        // Carry-Rippler, courtesy of Stockfish
+        // Carry-Rippler
         let mut b: BitBoard = 0.into();
         size = 0;
         loop {
-            occupancy[size] = b;
             reference[size] = PieceType::sliding_attack(attack_directions, sq, b);
 
             let idx: usize = u64::from(((b & magic.mask) * (magic.magic.into())) >> (magic.shift.into())) as usize;
@@ -43,7 +41,7 @@ pub static SLIDING_ROOK: Lazy<SlidingRook> = Lazy::new(|| {
 
             size += 1;
             b = (b - magic.mask) & magic.mask;
-            if !(b == 0.into()) {
+            if b == 0.into() {
                 break;
             }
         }
