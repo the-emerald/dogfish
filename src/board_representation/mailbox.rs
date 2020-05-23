@@ -1,7 +1,5 @@
-use crate::board::piecetype::PieceType;
-use crate::board::piece::Piece;
-use crate::board::colour::Colour;
 use crate::board_representation::square::Square;
+use crate::piece::Piece;
 
 pub struct Mailbox {
     pieces: [Option<Piece>; 64],
@@ -24,5 +22,11 @@ impl Mailbox {
 
     pub fn get_piece(&self, square: Square) -> Option<Piece> {
         self.pieces[square.value() as usize]
+    }
+}
+
+impl Default for Mailbox {
+    fn default() -> Self {
+        Self::new()
     }
 }
