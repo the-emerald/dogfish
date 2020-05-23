@@ -44,7 +44,8 @@ impl PieceType {
     }
 
     pub fn queen_attack(square: Square, occupancy: BitBoard) -> BitBoard {
-        unimplemented!()
+        PieceType::rook_attack(square, occupancy) |
+        PieceType::bishop_attack(square, occupancy)
     }
 
     pub fn king_attack(square: Square) -> BitBoard {
