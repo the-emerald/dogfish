@@ -1,5 +1,4 @@
 use crate::board_representation::bitboard::BitBoard;
-use crate::board_representation::square::ParseError::BitBoardNotUnit;
 use once_cell::sync::Lazy;
 use crate::board_representation::square::Square;
 use std::convert::TryFrom;
@@ -19,7 +18,7 @@ macro_rules! populate_magic {
                 let sq = Square::try_from(square as u64).unwrap();
                 let mut reference = [BitBoard::new(0); 4096];
 
-                let mut edges = ((RANK_1_BITBOARD | RANK_8_BITBOARD) & !BitBoard::bitboard_of_rank(sq)) |
+                let edges = ((RANK_1_BITBOARD | RANK_8_BITBOARD) & !BitBoard::bitboard_of_rank(sq)) |
                     ((FILE_A_BITBOARD | FILE_H_BITBOARD) & !BitBoard::bitboard_of_file(sq));
 
                 magic.mask = PieceType::sliding_attack(attack_directions, sq, 0.into()) & !edges;

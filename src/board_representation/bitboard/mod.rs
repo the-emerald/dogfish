@@ -26,7 +26,7 @@ impl BitBoard {
 
     pub fn bitboard_of_rank(square: Square) -> Self {
         let r = square.value() >> 3;
-        RANK_1_BITBOARD << BitBoard::from((8 * r))
+        RANK_1_BITBOARD << BitBoard::from(8 * r)
     }
 
     pub fn bitboard_of_file(square: Square) -> Self {

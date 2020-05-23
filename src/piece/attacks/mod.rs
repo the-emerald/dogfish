@@ -1,13 +1,11 @@
 use crate::board_representation::bitboard::BitBoard;
 use crate::piece::piecetype::PieceType;
 use crate::piece::colour::Colour;
-use crate::piece::piecetype::PieceType::{P, N, K, Q, R, B};
-use crate::board_representation::bitboard::shift::Direction::{North, NorthEast, NorthWest, SouthEast, SouthWest};
+use crate::board_representation::bitboard::shift::Direction::{NorthEast, NorthWest, SouthEast, SouthWest};
 use crate::board_representation::bitboard::shift::Direction;
 use crate::board_representation::square::Square;
 use crate::piece::attacks::knight::ATTACK_TABLE_KNIGHT;
 use crate::piece::attacks::king::ATTACK_TABLE_KING;
-use crate::board_representation::square::ParseError::BitBoardNotUnit;
 use crate::piece::attacks::magic::{SLIDING_ROOK, SLIDING_BISHOP};
 
 pub mod knight;
@@ -32,17 +30,17 @@ impl PieceType {
     pub fn bishop_attack(square: Square, occupancy: BitBoard) -> BitBoard {
         let magic = SLIDING_BISHOP.magic[square.value() as usize];
         let idx: usize = u64::from(
-            (occupancy & magic.mask()) * (magic.magic().into()) >> (magic.shift().into())
+            ((occupancy & magic.mask()) * (magic.magic().into())) >> (magic.shift().into())
         ) as usize;
-        return SLIDING_BISHOP.table[magic.table() + idx];
+        SLIDING_BISHOP.table[magic.table() + idx]
     }
 
     pub fn rook_attack(square: Square, occupancy: BitBoard) -> BitBoard {
         let magic = SLIDING_ROOK.magic[square.value() as usize];
         let idx: usize = u64::from(
-            (occupancy & magic.mask()) * (magic.magic().into()) >> (magic.shift().into())
+            ((occupancy & magic.mask()) * (magic.magic().into())) >> (magic.shift().into())
         ) as usize;
-        return SLIDING_ROOK.table[magic.table() + idx];
+        SLIDING_ROOK.table[magic.table() + idx]
     }
 
     pub fn queen_attack(square: Square, occupancy: BitBoard) -> BitBoard {
@@ -60,7 +58,7 @@ impl PieceType {
             let mut current_sq = BitBoard::from(square);
             // First: Bitboard of square is not empty
             // Second: No piece occupies that square
-            while BitBoard::from(current_sq) != BitBoard::new(0) && (occupancy & current_sq.into()) == 0.into() {
+            while current_sq != BitBoard::new(0) && (occupancy & current_sq) == 0.into() {
                 current_sq = current_sq.shift(*direction);
                 attacks |= current_sq;
 

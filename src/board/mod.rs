@@ -56,26 +56,20 @@ impl Board {
 
     pub fn remove_square(&mut self, square: Square) {
         let piece = self.mailbox.get_piece(square);
-        match piece {
-            Some(p) => {
-                let s: BitBoard = square.into();
-                self.bb_player[p.colour() as usize] &= !s;
-                self.bb_pieces[p.piece_type() as usize] &= !s;
 
-                self.mailbox.remove_piece(square);
-            }
-            None => {},
+        if let Some(p) = piece {
+            let s: BitBoard = square.into();
+            self.bb_player[p.colour() as usize] &= !s;
+            self.bb_pieces[p.piece_type() as usize] &= !s;
+            self.mailbox.remove_piece(square);
         }
     }
 
     pub fn move_square(&mut self, from: Square, to: Square) {
         self.remove_square(from);
 
-        match self.mailbox.get_piece(from) {
-            Some(fp) => {
-                self.set_piece(to, fp);
-            }
-            None => {}
+        if let Some(fp) = self.mailbox.get_piece(from) {
+            self.set_piece(to, fp);
         }
     }
 }
