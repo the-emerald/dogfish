@@ -53,12 +53,13 @@ impl PieceType {
         let mut attacks: BitBoard = 0.into();
 
         for direction in attack_directions.iter() {
-            let mut next = BitBoard::from(square).shift(*direction);
+            let mut current_sq = BitBoard::from(square);
             // First: Bitboard of square is not empty
             // Second: No piece occupies that square
-            while BitBoard::from(next) != BitBoard::new(0) && (occupancy & next.into()) == 0.into() {
-                attacks |= next;
-                next = next.shift(*direction);
+            while BitBoard::from(current_sq) != BitBoard::new(0) && (occupancy & current_sq.into()) == 0.into() {
+                current_sq = current_sq.shift(*direction);
+                attacks |= current_sq;
+
             }
         }
         attacks
@@ -75,7 +76,7 @@ mod tests {
 
     #[test]
     fn rook() {
-        let occupancy = BitBoard::new(0x8000000000000);
+        let occupancy = BitBoard::new(8000000000800);
         let sq = Square::try_from(35).unwrap();
 
         let attacks = PieceType::rook_attack(sq, occupancy);
@@ -85,13 +86,14 @@ mod tests {
     }
 
     #[test]
-    #[ignore]
     fn sliding_attacks() {
         let occupancy = BitBoard::new(0x1104000008);
         let a1 = Square::try_from(0).unwrap();
         let directions = [North, East, South, West];
 
         let sliding = PieceType::sliding_attack(directions, a1, occupancy);
-        println!("{:?}", sliding);
+        println!("Rook: {:?}", BitBoard::from(a1));
+        println!("Occupancy: {:?}", occupancy);
+        println!("Sliding: {:?}", sliding);
     }
 }
