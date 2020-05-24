@@ -12,3 +12,12 @@ impl From<Piece> for Colour {
         value.colour()
     }
 }
+
+impl Colour {
+    pub fn other(self) -> Self {
+        match self {
+            Colour::White => {Colour::Black},
+            Colour::Black => {Colour::White},
+        }
+    }
+}

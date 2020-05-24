@@ -1,13 +1,16 @@
 use std::str::FromStr;
-use crate::board::{Board};
+use crate::board::{Board, PLAYERS_COUNT};
 use crate::board::castling::CastlingRights;
 use crate::board_representation::square::Square;
-use std::convert::TryInto;
+use std::convert::{TryInto, TryFrom};
 use crate::piece::colour::Colour;
 use crate::piece::piecetype::PieceType;
 use crate::board_representation;
 use crate::board::fen::ParseError::{Size, Rank, PiecePosition, Unrecognised, Castling, EnPassant};
 use std::num::ParseIntError;
+use crate::board::state::State;
+use crate::board_representation::bitboard::BitBoard;
+use std::sync::Arc;
 
 #[derive(thiserror::Error, Debug)]
 pub enum ParseError {
@@ -37,6 +40,9 @@ impl FromStr for Board {
 
     fn from_str(s: &str) -> Result<Self, ParseError> {
         let mut board = Board::new();
+
+        let mut castling = [[false; 2]; PLAYERS_COUNT];
+        let mut ep: BitBoard = BitBoard::from(0);
 
         // Check if there are enough parts for the FEN
         let v: Vec<&str> = s.trim().split(' ').collect();
@@ -147,16 +153,16 @@ impl FromStr for Board {
         for char in v[2].chars() {
             match char {
                 'K' => {
-                    board.castling_rights[Colour::White as usize][CastlingRights::KingSide as usize] = true;
+                    castling[Colour::White as usize][CastlingRights::KingSide as usize] = true;
                 },
                 'Q' => {
-                    board.castling_rights[Colour::White as usize][CastlingRights::QueenSide as usize] = true;
+                    castling[Colour::White as usize][CastlingRights::QueenSide as usize] = true;
                 },
                 'k' => {
-                    board.castling_rights[Colour::Black as usize][CastlingRights::KingSide as usize] = true;
+                    castling[Colour::Black as usize][CastlingRights::KingSide as usize] = true;
                 },
                 'q' => {
-                    board.castling_rights[Colour::Black as usize][CastlingRights::QueenSide as usize] = true;
+                    castling[Colour::Black as usize][CastlingRights::QueenSide as usize] = true;
                 }
                 _ => {
                     return Err(Unrecognised(char.to_string()))
@@ -166,7 +172,7 @@ impl FromStr for Board {
 
         // Validate said castling rights
         let white_castling_squares = [0_u64, 7];
-        for wc in board.castling_rights[Colour::White as usize].iter().zip(white_castling_squares.iter()) {
+        for wc in castling[Colour::White as usize].iter().zip(white_castling_squares.iter()) {
             if *wc.0 {
                 match board.mailbox.get_piece((*wc.1).try_into()?) {
                     None => {
@@ -182,7 +188,7 @@ impl FromStr for Board {
 
         // Black
         let black_castling_squares = [56_u64, 63];
-        for bc in board.castling_rights[Colour::Black as usize].iter().zip(black_castling_squares.iter()) {
+        for bc in castling[Colour::Black as usize].iter().zip(black_castling_squares.iter()) {
             if *bc.0 {
                 match board.mailbox.get_piece((*bc.1).try_into()?) {
                     None => {
@@ -200,7 +206,7 @@ impl FromStr for Board {
         }
 
         // En passant square
-        board.en_passant = {
+        ep = {
             if v[3] != "-" {
                 match (v[3].chars().nth(1), v[3].chars().next()) {
                     (Some(r), Some(f)) => {
@@ -217,9 +223,18 @@ impl FromStr for Board {
             }
         };
 
-        // Half moves and full moves
-        board.half_moves = v[4].parse()?;
-        board.full_moves = v[5].parse()?;
+
+        let state = {
+            let mut state = State::default();
+            state.en_passant = Some(ep);
+            state.castling = castling;
+            state.rule_50 = v[4].parse()?;
+            state.ply = v[5].parse()?;
+            state.apply_board(&board);
+            state
+        };
+
+        board.state = Arc::new(state);
 
         Ok(board)
     }

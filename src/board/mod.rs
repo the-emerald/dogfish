@@ -4,9 +4,11 @@ use crate::board_representation::mailbox::Mailbox;
 use crate::board_representation::square::Square;
 use crate::piece::colour::Colour;
 use crate::piece::Piece;
+use crate::board::state::State;
 
 pub mod fen;
 pub mod castling;
+pub mod state;
 
 pub const PLAYERS_COUNT: usize = 2; // Number of players
 pub const PIECES_TYPE_COUNT: usize = 6; // Number of types of pieces there are for each side
@@ -23,13 +25,7 @@ pub struct Board {
 
     mailbox: Mailbox,
 
-    castling_rights: [[bool; 2]; PLAYERS_COUNT],
-    en_passant: BitBoard,
-
-    half_moves: u8,
-    full_moves: u8,
-
-    previous: Option<Arc<Board>>
+    state: Arc<State>
 }
 
 impl Board {
@@ -39,11 +35,7 @@ impl Board {
             bb_pieces: [0.into(); PIECES_TYPE_COUNT],
             bb_player: [0.into(); PLAYERS_COUNT],
             mailbox: Mailbox::new(),
-            castling_rights: [[false; 2]; PLAYERS_COUNT],
-            en_passant: 0.into(),
-            half_moves: 0,
-            full_moves: 0,
-            previous: None
+            state: Arc::new(State::default())
         }
     }
 
