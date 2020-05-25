@@ -5,6 +5,9 @@ use crate::board_representation::square::Square;
 use crate::piece::colour::Colour;
 use crate::piece::Piece;
 use crate::board::state::State;
+use crate::piece::piecetype::PieceType;
+use crate::piece::piecetype::PieceType::{P, N, R, B, Q};
+use crate::piece::colour::Colour::{Black, White};
 
 pub mod fen;
 pub mod castling;
@@ -63,6 +66,31 @@ impl Board {
         if let Some(fp) = self.mailbox.get_piece(from) {
             self.set_piece(to, fp);
         }
+    }
+
+    pub fn attacks_to_king(&self, square: Square, king_colour: Colour) -> BitBoard {
+        let sq: BitBoard = square.into();
+        let occupancy = self.bb_player[Black as usize] | self.bb_player[White as usize];
+
+        let opponent_pawns = self.bb_pieces[P as usize] & self.bb_player[king_colour.other() as usize];
+        let opponent_knights = self.bb_pieces[N as usize] & self.bb_player[king_colour.other() as usize];
+        let opponent_rooks = {
+            self.bb_pieces[R as usize] & self.bb_player[king_colour.other() as usize] |
+            self.bb_pieces[Q as usize] & self.bb_player[king_colour.other() as usize]
+        };
+        let opponent_bishops = {
+            self.bb_pieces[B as usize] & self.bb_player[king_colour.other() as usize] |
+            self.bb_pieces[Q as usize] & self.bb_player[king_colour.other() as usize]
+        };
+
+        (PieceType::pawn_attack(sq, king_colour) & opponent_pawns) |
+        (PieceType::knight_attack(square) & opponent_knights) |
+        (PieceType::rook_attack(square, occupancy) & opponent_rooks) |
+        (PieceType::bishop_attack(square, occupancy) & opponent_bishops)
+    }
+
+    pub fn attacks_to(&self, square: Square) -> BitBoard {
+        unimplemented!()
     }
 }
 

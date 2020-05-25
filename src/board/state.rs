@@ -3,6 +3,8 @@ use std::sync::Arc;
 use crate::board_representation::bitboard::BitBoard;
 use crate::moves::Move;
 use crate::board_representation::square::Square;
+use crate::piece::piecetype::PieceType;
+use std::convert::TryInto;
 
 pub struct State {
     // Copy-and-update on move
@@ -14,7 +16,7 @@ pub struct State {
 
     // Recalculate on move
     // These must be set up bu applying a board.
-    pub bb_checks: BitBoard, // Pieces giving check
+    pub bb_checkers: BitBoard, // Pieces giving check
     pub bb_pinned: BitBoard, // Pieces that are pinned
     pub bb_pinners: BitBoard, // Pieces that pin other pieces
 
@@ -26,6 +28,9 @@ pub struct State {
 impl State {
     // Populate fields using a board.
     pub fn apply_board(&mut self, board: &Board) {
+        let king = board.bb_pieces[PieceType::K as usize] & board.bb_player[board.player as usize];
+
+        self.bb_checkers = board.attacks_to_king(king.try_into().unwrap(), board.player);
         unimplemented!()
     }
 
@@ -44,7 +49,7 @@ impl Default for State {
             ply: 0,
             castling: [[false; 2]; PLAYERS_COUNT],
             en_passant: None,
-            bb_checks: 0.into(),
+            bb_checkers: 0.into(),
             bb_pinned: 0.into(),
             bb_pinners: 0.into(),
             previous_move: None,
