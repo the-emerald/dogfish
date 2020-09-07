@@ -83,8 +83,8 @@ mod tests {
 
     #[test]
     fn test_line_between() {
-        let point_1: Square = 0_u64.try_into().unwrap();
-        let point_2: Square = 24_u64.try_into().unwrap();
+        let point_1: Square = 5_u64.try_into().unwrap();
+        let point_2: Square = 61_u64.try_into().unwrap();
 
         println!("Point 1:{:?}", BitBoard::from(point_1));
         println!("Point 2:{:?}", BitBoard::from(point_2));
@@ -93,7 +93,7 @@ mod tests {
 
         println!("Between:{:?}", line_between);
 
-        assert_eq!(line_between, BitBoard::from(0x10100));
+        assert_eq!(line_between, BitBoard::from(0x20202020202000));
     }
 
 }
