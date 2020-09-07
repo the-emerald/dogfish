@@ -107,6 +107,10 @@ impl Board {
             (PieceType::bishop_attack(square, occupancy) & bishop_queens) |
             (PieceType::rook_attack(square, occupancy) & rook_queens)
     }
+
+    pub fn absolute_pin_to(&self, square: Square) -> BitBoard {
+        unimplemented!()
+    }
 }
 
 impl Default for Board {

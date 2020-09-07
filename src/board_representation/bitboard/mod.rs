@@ -35,6 +35,12 @@ impl BitBoard {
     }
 }
 
+impl Default for BitBoard {
+    fn default() -> Self {
+        Self::new(0)
+    }
+}
+
 impl From<u64> for BitBoard {
     fn from(value: u64) -> Self {
         Self {
