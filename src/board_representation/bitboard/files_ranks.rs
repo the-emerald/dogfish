@@ -17,3 +17,5 @@ pub const RANK_5_BITBOARD: BitBoard = BitBoard { board: 0x00ff_0000_0000};
 pub const RANK_6_BITBOARD: BitBoard = BitBoard { board: 0xff00_0000_0000};
 pub const RANK_7_BITBOARD: BitBoard = BitBoard { board: 0x00ff_0000_0000_0000};
 pub const RANK_8_BITBOARD: BitBoard = BitBoard { board: 0xff00_0000_0000_0000};
+
+pub const FULL_BITBOARD: BitBoard = BitBoard { board: 0xffff_ffff_ffff_ffff };

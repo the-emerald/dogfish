@@ -108,7 +108,7 @@ impl Board {
             (PieceType::rook_attack(square, occupancy) & rook_queens)
     }
 
-    pub fn absolute_pin_to(&self, square: Square) -> BitBoard {
+    pub fn pinned_to(&self, square: Square) -> BitBoard {
         unimplemented!()
     }
 }
