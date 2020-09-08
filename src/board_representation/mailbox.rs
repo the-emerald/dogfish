@@ -1,6 +1,7 @@
 use crate::board_representation::square::Square;
 use crate::piece::Piece;
 
+#[derive(Copy, Clone)]
 pub struct Mailbox {
     pieces: [Option<Piece>; 64],
 }

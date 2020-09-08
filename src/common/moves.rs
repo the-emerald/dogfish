@@ -2,17 +2,29 @@ use crate::piece::Piece;
 use crate::board_representation::square::Square;
 
 pub struct Move {
-    from: Square,
-    to: Square,
+    source: Square,
+    destination: Square,
     promotion: Option<Piece>
 }
 
 impl Move {
-    pub fn new(from: Square, to: Square, promotion: Option<Piece>) -> Self {
+    pub fn new(source: Square, destination: Square, promotion: Option<Piece>) -> Self {
         Self {
-            from,
-            to,
+            source,
+            destination,
             promotion
         }
+    }
+
+    pub fn source(&self) -> Square {
+        self.source
+    }
+
+    pub fn destination(&self) -> Square {
+        self.destination
+    }
+
+    pub fn promotion(&self) -> Option<Piece> {
+        self.promotion
     }
 }

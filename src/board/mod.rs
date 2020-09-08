@@ -8,6 +8,7 @@ use crate::piece::piecetype::PieceType::{P, N, R, Q, B, K};
 use crate::piece::piecetype::PieceType;
 use std::convert::TryFrom;
 use crate::common::line::line_between;
+use crate::common::moves::Move;
 
 pub mod fen;
 pub mod castling;
@@ -20,6 +21,7 @@ pub const SQUARES: usize = 64;
 pub const FILES: usize = 8;
 pub const RANKS: usize = 8;
 
+#[derive(Copy, Clone)]
 pub struct Board {
     player: Colour,
 
@@ -141,6 +143,24 @@ impl Board {
             }
         }
         pin
+    }
+
+    pub fn do_move(&mut self, mov: Move) {
+        self.move_square(mov.source(), mov.destination());
+
+        // If there is a promotion
+        if let Some(p) = mov.promotion() {
+            self.set_piece(mov.destination(), p);
+        }
+
+        // Update moves
+        self.half_moves += 2;
+        self.full_moves += 1;
+
+        // Update en passant
+        if BitBoard::from(mov.destination()) == self.en_passant {
+            self.en_passant = BitBoard::default();
+        }
     }
 }
 
