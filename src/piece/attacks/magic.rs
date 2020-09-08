@@ -57,10 +57,9 @@ pub struct SlidingRook {
 
 impl SlidingRook {
     pub fn new() -> Box<Self> {
-        let mut sliding_rook = Box::new(SlidingRook {
-            table: [BitBoard::new(0); 0x19000],
-            magic: [Magic::default(); 64]
-        });
+        let mut sliding_rook: Box<SlidingRook> = unsafe {
+            Box::new_zeroed().assume_init()
+        };
 
         populate_magic(&mut sliding_rook.table, &mut sliding_rook.magic, &MAGIC_NUMBERS_ROOK, [North, East, South, West]);
 
@@ -75,10 +74,9 @@ pub struct SlidingBishop {
 
 impl SlidingBishop {
     pub fn new() -> Box<Self> {
-        let mut sliding_bishop = Box::new(SlidingBishop {
-            table: [BitBoard::new(0); 0x1480],
-            magic: [Magic::default(); 64]
-        });
+        let mut sliding_bishop: Box<SlidingBishop> = unsafe {
+            Box::new_zeroed().assume_init()
+        };
 
         populate_magic(&mut sliding_bishop.table, &mut sliding_bishop.magic, &MAGIC_NUMBERS_BISHOP, [NorthEast, SouthEast, SouthWest, NorthWest]);
 
