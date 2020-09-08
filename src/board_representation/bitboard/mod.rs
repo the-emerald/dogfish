@@ -21,6 +21,10 @@ impl BitBoard {
     }
 
     pub fn iter_bits(self) -> impl Iterator<Item = bool> {
+        (0..64).map(move |x| (self.board >> x) & 1 == 1)
+    }
+
+    fn iter_bits_rev(self) -> impl Iterator<Item = bool> {
         (0..64).rev().map(move |x| (self.board >> x) & 1 == 1)
     }
 
@@ -72,7 +76,7 @@ impl fmt::Display for BitBoard {
 impl fmt::Debug for BitBoard {
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         let file = "\n   A B C D E F G H";
-        let board = self.iter_bits()
+        let board = self.iter_bits_rev()
             .map(
                 |x| if x {"x "} else {". "}
             )

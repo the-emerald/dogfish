@@ -6,6 +6,8 @@ use crate::piece::Piece;
 use crate::piece::colour::Colour::{Black, White};
 use crate::piece::piecetype::PieceType::{P, N, R, Q, B, K};
 use crate::piece::piecetype::PieceType;
+use std::convert::TryFrom;
+use crate::common::line::line_between;
 
 pub mod fen;
 pub mod castling;
@@ -96,20 +98,49 @@ impl Board {
     }
 
     pub fn attacks_to(&self, square: Square) -> BitBoard {
-        let occupancy = self.bb_player[Black as usize] | self.bb_player[White as usize];
-        let rook_queens = self.bb_pieces[R as usize] | self.bb_pieces[Q as usize];
-        let bishop_queens = self.bb_pieces[B as usize] | self.bb_pieces[Q as usize];
-
         (PieceType::pawn_attack(square.into(), White) & self.bb_player[Black as usize]) |
             (PieceType::pawn_attack(square.into(), Black) & self.bb_player[White as usize]) |
             (PieceType::knight_attack(square) & self.bb_pieces[N as usize]) |
             (PieceType::king_attack(square) & self.bb_pieces[K as usize]) |
-            (PieceType::bishop_attack(square, occupancy) & bishop_queens) |
-            (PieceType::rook_attack(square, occupancy) & rook_queens)
+            (PieceType::bishop_attack(square, self.occupancy()) & self.bishop_queens()) |
+            (PieceType::rook_attack(square, self.occupancy()) & self.rook_queens())
+    }
+
+    fn occupancy(&self) -> BitBoard {
+        self.bb_player[Black as usize] | self.bb_player[White as usize]
+    }
+
+    fn bishop_queens(&self) -> BitBoard {
+        self.bb_pieces[B as usize] | self.bb_pieces[Q as usize]
+    }
+
+    fn rook_queens(&self) -> BitBoard {
+        self.bb_pieces[R as usize] | self.bb_pieces[Q as usize]
     }
 
     pub fn pinned_to(&self, square: Square) -> BitBoard {
-        unimplemented!()
+        let mut pin = BitBoard::default();
+
+        let opponent_rays = self.bb_player[self.player.other() as usize] &
+            (self.rook_queens() | self.bishop_queens());
+
+        for piece in opponent_rays
+            .iter_bits()
+            .enumerate()
+            .filter(|p| p.1)
+            .map(|q| Square::try_from(q.0 as u64).unwrap())
+        {
+            let line = line_between(piece, square) & self.occupancy();
+
+            // If line not occupancy one or pieces not same colour
+            if u64::from(line).count_ones() != 1 || (line & self.bb_player[Black as usize]) != line {
+                continue
+            }
+            else {
+                pin |= line;
+            }
+        }
+        pin
     }
 }
 

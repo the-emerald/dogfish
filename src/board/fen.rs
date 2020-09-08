@@ -158,6 +158,9 @@ impl FromStr for Board {
                 'q' => {
                     board.castling_rights[Colour::Black as usize][CastlingRights::QueenSide as usize] = true;
                 }
+                '-' => {
+                    break
+                }
                 _ => {
                     return Err(Unrecognised(char.to_string()))
                 }
