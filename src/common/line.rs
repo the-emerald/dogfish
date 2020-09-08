@@ -110,33 +110,4 @@ mod tests {
 
         assert_eq!(line_between, BitBoard::from(0x201008000000));
     }
-
-    #[test]
-    fn line_between_fen_basic() {
-        let board: Board = "3k4/3b4/8/8/8/8/3Q4/3K4 b - - 0 1".parse().unwrap();
-        let king = Square::try_from(59).unwrap();
-        assert_eq!(board.pinned_to(king), BitBoard::from(0x8000000000000))
-    }
-
-    #[test]
-    fn line_between_fen_2colour() {
-        let board: Board = "3k4/3n4/3N4/8/8/8/3Q4/3K4 b - - 0 1".parse().unwrap();
-        let king = Square::try_from(59).unwrap();
-        assert_eq!(board.pinned_to(king), BitBoard::default())
-    }
-
-    #[test]
-    fn line_between_fen_same_colour() {
-        let board: Board = "3k4/8/3N4/8/8/8/3Q4/3K4 b - - 0 1".parse().unwrap();
-        let king = Square::try_from(59).unwrap();
-        assert_eq!(board.pinned_to(king), BitBoard::default())
-    }
-
-    #[test]
-    fn line_between_fen_complex() {
-        let board: Board = "3k2R1/2n1p3/1n1n4/B5B1/8/8/3Q4/3K4 b - - 0 1".parse().unwrap();
-        let king = Square::try_from(59).unwrap();
-        assert_eq!(board.pinned_to(king), BitBoard::from(0x10080000000000))
-    }
-
 }

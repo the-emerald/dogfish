@@ -133,7 +133,7 @@ impl Board {
             let line = line_between(piece, square) & self.occupancy();
 
             // If line not occupancy one or pieces not same colour
-            if u64::from(line).count_ones() != 1 || (line & self.bb_player[Black as usize]) != line {
+            if u64::from(line).count_ones() != 1 || (line & self.bb_player[self.player.other() as usize]) == line {
                 continue
             }
             else {
@@ -147,5 +147,48 @@ impl Board {
 impl Default for Board {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use crate::board::Board;
+    use crate::board_representation::bitboard::BitBoard;
+    use crate::board_representation::square::Square;
+    use std::convert::TryFrom;
+
+    #[test]
+    fn pinned_fen_basic() {
+        let board: Board = "3k4/3b4/8/8/8/8/3Q4/3K4 b - - 0 1".parse().unwrap();
+        let king = Square::try_from(59).unwrap();
+        assert_eq!(board.pinned_to(king), BitBoard::from(0x8000000000000))
+    }
+
+    #[test]
+    fn pinned_fen_2colour() {
+        let board: Board = "3k4/3n4/3N4/8/8/8/3Q4/3K4 b - - 0 1".parse().unwrap();
+        let king = Square::try_from(59).unwrap();
+        assert_eq!(board.pinned_to(king), BitBoard::default())
+    }
+
+    #[test]
+    fn pinned_fen_same_colour() {
+        let board: Board = "3k4/8/3N4/8/8/8/3Q4/3K4 b - - 0 1".parse().unwrap();
+        let king = Square::try_from(59).unwrap();
+        assert_eq!(board.pinned_to(king), BitBoard::default())
+    }
+
+    #[test]
+    fn pinned_fen_complex() {
+        let board: Board = "3k2R1/2n1p3/1n1n4/B5B1/8/8/3Q4/3K4 b - - 0 1".parse().unwrap();
+        let king = Square::try_from(59).unwrap();
+        assert_eq!(board.pinned_to(king), BitBoard::from(0x10080000000000))
+    }
+
+    #[test]
+    fn pinned_fen_complex_inverted() {
+        let board: Board = "3K2r1/2N1P3/1N1N4/b5b1/8/8/3q4/3k4 w - - 0 1".parse().unwrap();
+        let king = Square::try_from(59).unwrap();
+        assert_eq!(board.pinned_to(king), BitBoard::from(0x10080000000000))
     }
 }
