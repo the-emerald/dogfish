@@ -45,21 +45,10 @@ fn populate_magic(table: &mut [BitBoard], magics: &mut [Magic], magic_numbers: &
     }
 }
 
-pub static SLIDING_ROOK: Lazy<SlidingRook> = Lazy::new(|| {
-    let mut sliding_rook = SlidingRook::new([BitBoard::new(0); 0x19000], [Magic::default(); 64]);
 
-    populate_magic(&mut sliding_rook.table, &mut sliding_rook.magic, &MAGIC_NUMBERS_ROOK, [North, East, South, West]);
+pub static SLIDING_ROOK: Lazy<SlidingRook> = Lazy::new(SlidingRook::new);
 
-    sliding_rook
-});
-
-pub static SLIDING_BISHOP: Lazy<SlidingBishop> = Lazy::new(|| {
-    let mut sliding_bishop = SlidingBishop::new([BitBoard::new(0); 0x1480], [Magic::default(); 64]);
-
-    populate_magic(&mut sliding_bishop.table, &mut sliding_bishop.magic, &MAGIC_NUMBERS_BISHOP, [NorthEast, SouthEast, SouthWest, NorthWest]);
-
-    sliding_bishop
-});
+pub static SLIDING_BISHOP: Lazy<SlidingBishop> = Lazy::new(SlidingBishop::new);
 
 pub struct SlidingRook {
     pub table: [BitBoard; 0x19000],
@@ -67,11 +56,15 @@ pub struct SlidingRook {
 }
 
 impl SlidingRook {
-    pub fn new(table: [BitBoard; 0x19000], magic: [Magic; 64]) -> Self {
-        Self {
-            table,
-            magic
-        }
+    pub fn new() -> Self {
+        let mut sliding_rook = SlidingRook {
+            table: [BitBoard::new(0); 0x19000],
+            magic: [Magic::default(); 64]
+        };
+
+        populate_magic(&mut sliding_rook.table, &mut sliding_rook.magic, &MAGIC_NUMBERS_ROOK, [North, East, South, West]);
+
+        sliding_rook
     }
 }
 
@@ -81,11 +74,15 @@ pub struct SlidingBishop {
 }
 
 impl SlidingBishop {
-    pub fn new(table: [BitBoard; 0x1480], magic: [Magic; 64]) -> Self {
-        Self {
-            table,
-            magic
-        }
+    pub fn new() -> Self {
+        let mut sliding_bishop = SlidingBishop {
+            table: [BitBoard::new(0); 0x1480],
+            magic: [Magic::default(); 64]
+        };
+
+        populate_magic(&mut sliding_bishop.table, &mut sliding_bishop.magic, &MAGIC_NUMBERS_BISHOP, [NorthEast, SouthEast, SouthWest, NorthWest]);
+
+        sliding_bishop
     }
 }
 
