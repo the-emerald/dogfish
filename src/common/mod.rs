@@ -5,7 +5,6 @@ use std::convert::TryFrom;
 use crate::piece::piecetype::PieceType;
 use itertools::iproduct;
 use crate::board_representation::bitboard::files_ranks::FULL_BITBOARD;
-use crate::board_representation::square::ParseError::BitBoardNotUnit;
 
 pub mod moves;
 

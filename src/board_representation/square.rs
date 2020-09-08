@@ -95,8 +95,7 @@ impl TryFrom<BitBoard> for Square {
     type Error = ParseError;
 
     fn try_from(value: BitBoard) -> Result<Self, Self::Error> {
-        // TODO: Do something for when the bitboard is empty
-        if (value & (value - 1_u64.into())) != 0_u64.into() {
+        if u64::from(value).count_ones() != 1 {
             return Err(BitBoardNotUnit);
         }
         Ok((u64::from(value).trailing_zeros() as u64).try_into().unwrap())
