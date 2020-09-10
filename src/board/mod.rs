@@ -6,9 +6,13 @@ use crate::piece::Piece;
 use crate::piece::colour::Colour::{Black, White};
 use crate::piece::piecetype::PieceType::{P, N, R, Q, B, K};
 use crate::piece::piecetype::PieceType;
-use std::convert::TryFrom;
+use std::convert::{TryFrom, TryInto};
 use crate::common::line::line_between;
 use crate::common::moves::Move;
+use crate::board_representation::bitboard::files_ranks::{RANK_1_BITBOARD, RANK_8_BITBOARD};
+use crate::common::distance::SQUARE_DISTANCE;
+use crate::board_representation::bitboard::shift::Direction::{North, South};
+use std::hint::unreachable_unchecked;
 
 pub mod fen;
 pub mod castling;
@@ -33,8 +37,8 @@ pub struct Board {
     castling_rights: [[bool; 2]; PLAYERS_COUNT],
     en_passant: BitBoard,
 
-    half_moves: u8,
-    full_moves: u8,
+    half_moves: u8,     // 50-move rule counter
+    full_moves: u8,     // Number of plies from root
 
 }
 
@@ -53,16 +57,23 @@ impl Board {
     }
 
     pub fn set_piece(&mut self, square: Square, piece: Piece) {
+        // First check if there is already a piece on this square
+        if let Some(p) = self.mailbox.get_piece(square) {
+            let s: BitBoard = square.into();
+            self.bb_player[p.colour() as usize] &= !s;
+            self.bb_pieces[p.piece_type() as usize] &= !s;
+            self.mailbox.remove_piece(square);
+        }
+
+        // Then set the piece
         self.bb_player[piece.colour() as usize] |= square.into();
         self.bb_pieces[piece.piece_type() as usize] |= square.into();
-
         self.mailbox.set_piece(square, piece);
     }
 
     pub fn remove_square(&mut self, square: Square) {
-        let piece = self.mailbox.get_piece(square);
-
-        if let Some(p) = piece {
+        // Only toggle bits if there is something on that square
+        if let Some(p) = self.mailbox.get_piece(square) {
             let s: BitBoard = square.into();
             self.bb_player[p.colour() as usize] &= !s;
             self.bb_pieces[p.piece_type() as usize] &= !s;
@@ -71,11 +82,8 @@ impl Board {
     }
 
     pub fn move_square(&mut self, from: Square, to: Square) {
+        self.set_piece(to, self.mailbox.get_piece(from).expect("no piece in from square in move"));
         self.remove_square(from);
-
-        if let Some(fp) = self.mailbox.get_piece(from) {
-            self.set_piece(to, fp);
-        }
     }
 
     pub fn attacks_to_king(&self, square: Square, king_colour: Colour) -> BitBoard {
@@ -146,21 +154,63 @@ impl Board {
     }
 
     pub fn do_move(&mut self, mov: Move) {
-        self.move_square(mov.source(), mov.destination());
-
-        // If there is a promotion
-        if let Some(p) = mov.promotion() {
-            self.set_piece(mov.destination(), p);
+        #[cfg(debug_assertions)]
+        {
+            // TODO: Debug asserts
         }
 
-        // Update moves
-        self.half_moves += 2;
         self.full_moves += 1;
+        self.player = self.player.other();
+        self.en_passant = BitBoard::default();
 
-        // Update en passant
-        if BitBoard::from(mov.destination()) == self.en_passant {
-            self.en_passant = BitBoard::default();
+        match self.mailbox.get_piece(mov.source()).unwrap().piece_type() {
+            P => {
+                // Promote if rank is 1/8
+                if BitBoard::from(mov.destination()) & (RANK_1_BITBOARD | RANK_8_BITBOARD) != 0.into() {
+                    let promote_to = mov.promotion().expect("promotion without piece defined");
+                    self.set_piece(mov.destination(), promote_to);
+                }
+                // Set EP if move distance is 2
+                if SQUARE_DISTANCE[mov.source().value() as usize][mov.destination().value() as usize] == 2 {
+                    // Use other player because players were already flipped
+                    self.en_passant = match self.player.other() {
+                        White => {
+                            BitBoard::from(mov.source()).shift(North)
+                        },
+                        Black => {
+                            BitBoard::from(mov.source()).shift(South)
+                        },
+                    }
+                }
+                self.move_square(mov.source(), mov.destination());
+            },
+            K => {
+                // Check if castling
+                if SQUARE_DISTANCE[mov.source().value() as usize][mov.destination().value() as usize] == 2 {
+                    let (rook_from, rook_to) = match mov.destination().value() {
+                        6 => { (7, 5) },    // white O-O
+                        2 => { (0, 3) }     // white O-O-O
+                        62 => { (63, 61) }  // black O-O
+                        58 => { (56, 59) }  // black O-O-O
+                        _ => unsafe { unreachable_unchecked() }
+                    };
+                    self.move_square(rook_from.try_into().unwrap(), rook_to.try_into().unwrap());
+                }
+                // Move the king itself
+                self.move_square(mov.source(), mov.destination());
+                // Update castling rights
+                self.castling_rights[self.player.other() as usize] = [false; 2];
+            },
+            R => {
+                // If the rook is the piece being moved then castling rights are removed
+                self.castling_rights[self.player.other() as usize] = [false; 2];
+                self.move_square(mov.source(), mov.destination());
+            }
+            _ => {
+                self.move_square(mov.source(), mov.destination());
+            },
         }
+
     }
 }
 

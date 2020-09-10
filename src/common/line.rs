@@ -17,14 +17,14 @@ pub static LINE_INTERSECTING: Lazy<[[BitBoard; 64]; 64]> = Lazy::new(|| {
         let start_finish: BitBoard = BitBoard::from(s1) | BitBoard::from(s2);
 
         if (PieceType::bishop_attack(s1, 0.into()) & s2.into()) != 0.into() {
-            lb[u64::from(s1) as usize][u64::from(s2) as usize] =
+            lb[s1.value() as usize][s2.value() as usize] =
                 (
                     PieceType::bishop_attack(s1, 0.into()) &
                         PieceType::bishop_attack(s2, 0.into())
                 ) | start_finish;
         }
         else if (PieceType::rook_attack(s1, 0.into()) & s2.into()) != 0.into() {
-            lb[u64::from(s1) as usize][u64::from(s2) as usize] =
+            lb[s1.value() as usize][s2.value() as usize] =
                 (
                     PieceType::rook_attack(s1, 0.into()) &
                         PieceType::rook_attack(s2, 0.into())
