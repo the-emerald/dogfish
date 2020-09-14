@@ -156,7 +156,15 @@ impl Board {
     pub fn do_move(&mut self, mov: Move) {
         #[cfg(debug_assertions)]
         {
-            // TODO: Debug asserts
+            // Capturing the king is impossible
+            if self.mailbox.get_piece(mov.destination())
+                .map_or(false, |p| p.piece_type() == K) {
+                panic!("do move captured king")
+            }
+            if self.mailbox.get_piece(mov.destination())
+                .map_or(false, |p| p.colour() == self.player) {
+                panic!("do move captured friendly piece")
+            }
         }
 
         self.full_moves += 1;
