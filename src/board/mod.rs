@@ -176,7 +176,7 @@ impl Board {
                 // Promote if rank is 1/8
                 if BitBoard::from(mov.destination()) & (RANK_1_BITBOARD | RANK_8_BITBOARD) != 0.into() {
                     let promote_to = mov.promotion().expect("promotion without piece defined");
-                    self.set_piece(mov.destination(), promote_to);
+                    self.set_piece(mov.destination(), Piece::new(self.player.other(), promote_to));
                 }
                 // Set EP if move distance is 2
                 if SQUARE_DISTANCE[mov.source().value() as usize][mov.destination().value() as usize] == 2 {

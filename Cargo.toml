@@ -10,6 +10,7 @@ edition = "2018"
 itertools = "0.9.0"
 thiserror = "1.0.17"
 once_cell = "1.4.0"
+smallvec = "1.4.2"
 
 [lib]
 name = "dogfish"
