@@ -3,6 +3,7 @@ use std::fmt::Formatter;
 use itertools::Itertools;
 use crate::board_representation::square::Square;
 use crate::board_representation::bitboard::files_ranks::{RANK_1_BITBOARD, FILE_A_BITBOARD};
+use std::convert::TryFrom;
 
 pub mod files_ranks;
 pub mod shift;
@@ -22,6 +23,13 @@ impl BitBoard {
 
     pub fn iter_bits(self) -> impl Iterator<Item = bool> {
         (0..64).map(move |x| (self.board >> x) & 1 == 1)
+    }
+
+    pub fn iter_squares(self) -> impl Iterator<Item = Square> {
+        self.iter_bits()
+            .enumerate()
+            .filter(|x| x.1)
+            .map(|x| Square::try_from(x.0 as u64).unwrap())
     }
 
     fn iter_bits_rev(self) -> impl Iterator<Item = bool> {

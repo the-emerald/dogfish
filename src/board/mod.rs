@@ -6,7 +6,7 @@ use crate::piece::Piece;
 use crate::piece::colour::Colour::{Black, White};
 use crate::piece::piecetype::PieceType::{P, N, R, Q, B, K};
 use crate::piece::piecetype::PieceType;
-use std::convert::{TryFrom, TryInto};
+use std::convert::TryInto;
 use crate::common::line::line_between;
 use crate::common::moves::Move;
 use crate::board_representation::bitboard::files_ranks::{RANK_1_BITBOARD, RANK_8_BITBOARD};
@@ -134,11 +134,7 @@ impl Board {
         let opponent_rays = self.bb_player[self.player.other() as usize] &
             (self.rook_queens() | self.bishop_queens());
 
-        for piece in opponent_rays
-            .iter_bits()
-            .enumerate()
-            .filter(|p| p.1)
-            .map(|q| Square::try_from(q.0 as u64).unwrap())
+        for piece in opponent_rays.iter_squares()
         {
             let line = line_between(piece, square) & self.occupancy();
 
