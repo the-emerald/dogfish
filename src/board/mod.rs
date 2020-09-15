@@ -60,7 +60,7 @@ impl Board {
         // First check if there is already a piece on this square
         if let Some(p) = self.mailbox.get_piece(square) {
             let s: BitBoard = square.into();
-            self.bb_player[p.colour() as usize] &= !s;
+            self.bb_player[p.colour() as usize] &= !s; // These directly modify the bitboard
             self.bb_pieces[p.piece_type() as usize] &= !s;
             self.mailbox.remove_piece(square);
         }
@@ -88,13 +88,12 @@ impl Board {
 
     pub fn attacks_to_king(&self, square: Square, king_colour: Colour) -> BitBoard {
         let sq: BitBoard = square.into();
-        let occupancy = self.bb_player[Black as usize] | self.bb_player[White as usize];
 
-        let opponent_pawns = self.bb_pieces[P as usize] & self.bb_player[king_colour.other() as usize];
-        let opponent_knights = self.bb_pieces[N as usize] & self.bb_player[king_colour.other() as usize];
+        let opponent_pawns = self.bitboard_of_piece(P) & self.bitboard_of_player(king_colour.other());
+        let opponent_knights = self.bitboard_of_piece(N) & self.bitboard_of_player(king_colour.other());
         let opponent_rooks = {
-            self.bb_pieces[R as usize] & self.bb_player[king_colour.other() as usize] |
-                self.bb_pieces[Q as usize] & self.bb_player[king_colour.other() as usize]
+            self.bitboard_of_piece(R) & self.bitboard_of_player(king_colour.other()) |
+                self.bitboard_of_piece(Q) & self.bitboard_of_player(king_colour.other())
         };
         let opponent_bishops = {
             self.bb_pieces[B as usize] & self.bb_player[king_colour.other() as usize] |
@@ -103,35 +102,43 @@ impl Board {
 
         (PieceType::pawn_attack(sq, king_colour) & opponent_pawns) |
             (PieceType::knight_attack(square) & opponent_knights) |
-            (PieceType::rook_attack(square, occupancy) & opponent_rooks) |
-            (PieceType::bishop_attack(square, occupancy) & opponent_bishops)
+            (PieceType::rook_attack(square, self.occupancy()) & opponent_rooks) |
+            (PieceType::bishop_attack(square, self.occupancy()) & opponent_bishops)
     }
 
     pub fn attacks_to(&self, square: Square) -> BitBoard {
-        (PieceType::pawn_attack(square.into(), White) & self.bb_player[Black as usize]) |
-            (PieceType::pawn_attack(square.into(), Black) & self.bb_player[White as usize]) |
-            (PieceType::knight_attack(square) & self.bb_pieces[N as usize]) |
-            (PieceType::king_attack(square) & self.bb_pieces[K as usize]) |
+        (PieceType::pawn_attack(square.into(), White) & self.bitboard_of_player(Black)) |
+            (PieceType::pawn_attack(square.into(), Black) & self.bitboard_of_player(White)) |
+            (PieceType::knight_attack(square) & self.bitboard_of_piece(N)) |
+            (PieceType::king_attack(square) & self.bitboard_of_piece(K)) |
             (PieceType::bishop_attack(square, self.occupancy()) & self.bishop_queens()) |
             (PieceType::rook_attack(square, self.occupancy()) & self.rook_queens())
     }
 
     fn occupancy(&self) -> BitBoard {
-        self.bb_player[Black as usize] | self.bb_player[White as usize]
+        self.bitboard_of_player(White) | self.bitboard_of_player(Black)
     }
 
     fn bishop_queens(&self) -> BitBoard {
-        self.bb_pieces[B as usize] | self.bb_pieces[Q as usize]
+        self.bitboard_of_piece(B) | self.bitboard_of_piece(Q)
     }
 
     fn rook_queens(&self) -> BitBoard {
-        self.bb_pieces[R as usize] | self.bb_pieces[Q as usize]
+        self.bitboard_of_piece(R) | self.bitboard_of_piece(Q)
+    }
+
+    fn bitboard_of_player(&self, colour: Colour) -> BitBoard {
+        self.bb_player[colour as usize]
+    }
+
+    fn bitboard_of_piece(&self, piece: PieceType) -> BitBoard {
+        self.bb_pieces[piece as usize]
     }
 
     pub fn pinned_to(&self, square: Square) -> BitBoard {
         let mut pin = BitBoard::default();
 
-        let opponent_rays = self.bb_player[self.player.other() as usize] &
+        let opponent_rays = self.bitboard_of_player(self.player.other()) &
             (self.rook_queens() | self.bishop_queens());
 
         for piece in opponent_rays.iter_squares()
@@ -190,7 +197,7 @@ impl Board {
             },
             K => {
                 // Check if castling
-                if SQUARE_DISTANCE[mov.source().value() as usize][mov.destination().value() as usize] == 2 {
+                if SQUARE_DISTANCE[mov.source().value() as usize][mov.destination().value() as usize] == 2 { // TODO: Write function for static
                     let (rook_from, rook_to) = match mov.destination().value() {
                         6 => { (7, 5) },    // white O-O
                         2 => { (0, 3) }     // white O-O-O

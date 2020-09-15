@@ -16,12 +16,12 @@ impl Board {
     }
 
     pub fn generate_moves(&self) -> impl Iterator<Item = Move> {
-        let own_pieces = self.bb_pieces[self.player as usize];
-        let our_king = self.bb_pieces[K as usize] & self.bb_player[self.player as usize];
+        let own_pieces = self.bitboard_of_player(self.player);
+        let our_king = self.bitboard_of_piece(K) & self.bitboard_of_player(self.player);
         let pinned = self.pinned_to(our_king.try_into().expect("more than one king of the same colour"));
 
         let mut moves = Vec::new();
-        for piece in self.bb_player[self.player as usize].iter_squares() {
+        for piece in self.bitboard_of_player(self.player).iter_squares() {
             match self.mailbox.get_piece(piece).expect("empty square in move generation").piece_type() {
                 PieceType::P => {
                     // TODO: Finish pawn move generation
@@ -40,7 +40,7 @@ impl Board {
                     if pawn_really_pinned {
                         for potential_unpin in mvs.iter_squares() {
                             // If the line that intersects the king and the pawn-from also intersects the potentially unpinning piece:
-                            if LINE_INTERSECTING[Square::try_from(our_king).unwrap().value() as usize][piece.value() as usize] & potential_unpin.into() != 0.into() {
+                            if line_intersecting(Square::try_from(our_king).unwrap(), piece) & potential_unpin.into() != 0.into() {
                                 mvs = potential_unpin.into();
                                 pawn_really_pinned = false;
                             }
