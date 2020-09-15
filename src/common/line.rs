@@ -34,6 +34,10 @@ pub static LINE_INTERSECTING: Lazy<[[BitBoard; 64]; 64]> = Lazy::new(|| {
     lb
 });
 
+pub fn line_intersecting(a: Square, b: Square) -> BitBoard {
+    LINE_INTERSECTING[a.value() as usize][b.value() as usize]
+}
+
 pub fn line_between(a: Square, b: Square) -> BitBoard {
     let b = LINE_INTERSECTING[u64::from(a) as usize][u64::from(b) as usize] &
         (

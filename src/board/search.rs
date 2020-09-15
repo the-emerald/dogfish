@@ -8,7 +8,7 @@ use crate::piece::colour::Colour;
 use crate::board_representation::bitboard::shift::Direction::{North, South};
 use crate::board_representation::bitboard::files_ranks::{RANK_1_BITBOARD, RANK_8_BITBOARD};
 use crate::board_representation::square::Square;
-use crate::common::line::LINE_INTERSECTING;
+use crate::common::line::{line_intersecting};
 
 impl Board {
     pub fn search(&self) {
